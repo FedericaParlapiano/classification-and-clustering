@@ -18,15 +18,15 @@ def processing():
                             "NCP": "Main Meals Number",
                             "CAEC": "Food Consumption Between Meals",
                             "SMOKE": "Smoke",
-                            "CH20": "Daily Water Consumption",
-                            "SSC": "Calories Consumption Monitoring",
+                            "CH2O": "Daily Water Consumption",
+                            "SCC": "Calories Consumption Monitoring",
                             "FAF": "Physical Activity Frequency",
                             "TUE": "Time Using Technology Devices",
                             "CALC": "Alcohol Consumption",
                             "MTRANS": "Transportation Used",
-                            "NObesidad": "Nutritional Status"})
+                            "NObeyesdad": "Nutritional Status"})
 
-    df.to_csv('data\obesity_dataset_clean.csv', header=True)
+    df.to_csv('data/obesity_dataset_clean.csv', header=True)
 
 
 if __name__ == '__main__':
