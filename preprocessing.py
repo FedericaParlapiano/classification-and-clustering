@@ -26,7 +26,7 @@ def processing():
                             "MTRANS": "Transportation Used",
                             "NObeyesdad": "Nutritional Status"})
 
-    df.to_csv('data\obesity_dataset_clean.csv', header=True)
+    df.to_csv('data/obesity_dataset_clean.csv', header=True)
 
 
 if __name__ == '__main__':
