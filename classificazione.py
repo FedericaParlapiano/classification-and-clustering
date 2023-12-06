@@ -3,6 +3,13 @@ import numpy as np
 
 df = pd.read_csv('data/ObesityDataSet.csv')
 
+df['FAVC'] = df['FAVC'].replace({'yes': 1, 'no': 0})
+df['SMOKE'] = df['SMOKE'].replace({'yes': 1, 'no': 0})
+df['SCC'] = df['SCC'].replace({'yes': 1, 'no': 0})
+
+df['CALC'] = df['CALC'].replace({'no': 0, 'Sometimes': 1, 'Frequently': 2, 'Always': 3})
+df['CAEC'] = df['CAEC'].replace({'no': 0, 'Sometimes': 1, 'Frequently': 2, 'Always': 3})
+
 df = df.rename(columns={"family_history_with_overweight": "Family History Of Overweight",
                         "FAVC": "High Caloric Food Consumption",
                         "FCVC": "Vegetables Consumption",
@@ -17,5 +24,8 @@ df = df.rename(columns={"family_history_with_overweight": "Family History Of Ove
                         "MTRANS": "Transportation Used",
                         "NObesidad": "Nutritional Status"})
 
-df = df.replace({'yes': 1, 'no': 0})
+
+print(df['High Caloric Food Consumption'])
+print(df['Alcohol Consumption'])
+
 
