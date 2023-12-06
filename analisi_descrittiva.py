@@ -8,6 +8,7 @@ file = 'data/obesity_dataset_clean.csv'
 obesity = pd.read_csv(file)
 obesity_no_index = obesity.iloc[:, 1:]
 
+
 def hist():
     df = pd.read_csv('data/obesity_dataset_clean.csv')
 
@@ -25,6 +26,7 @@ def hist():
     # Mostra il grafico
     plt.show()
 
+
 def plot_correlation_matrix(df):
     enc = LabelEncoder()
     columns_to_encode = ["Gender", "Family History Of Overweight", "Transportation Used", "Nutritional Status"]
@@ -37,7 +39,7 @@ def plot_correlation_matrix(df):
     sns.heatmap(corr, annot=True, cmap='crest')
 
     plt.title('Correlation Matrix')
-    plt.savefig('Correlation Matrix', bbox_inches='tight')
+    plt.savefig('grafici/Correlation Matrix', bbox_inches='tight')
     plt.show()
 
 
