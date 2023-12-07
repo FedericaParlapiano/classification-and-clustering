@@ -26,7 +26,7 @@ def weight_height():
     plt.title('Distribuzione del peso')
 
     plt.subplot(1, 2, 2)
-    sns.histplot(obesity['Height'], bins=numero_bin_height, color='#009090', kde=True,  alpha=0.3)
+    sns.histplot(obesity['Height'], bins=numero_bin_height, color='#009090', kde=True, alpha=0.3)
     plt.xlabel('Altezza')
     plt.ylabel('Frequenza')
     plt.title('Distribuzione dell\'altezza')
@@ -39,7 +39,8 @@ def BMI():
     obesity['BMI'] = obesity['Weight'] / obesity['Height'] ** 2
 
     sns.color_palette('Paired')
-    sns.kdeplot(obesity, x=obesity['BMI'], hue=obesity['Gender'], fill=True, palette={'Male':'#71a5d7', 'Female':'#e8638e'})
+    sns.kdeplot(obesity, x=obesity['BMI'], hue=obesity['Gender'], fill=True,
+                palette={'Male': '#71a5d7', 'Female': '#e8638e'})
     plt.ylabel('Densità')
     plt.title('Distribuzione dell\'indice di massa corporea')
     plt.savefig('grafici/Distribuzione BMI', bbox_inches='tight')
@@ -56,7 +57,7 @@ def pie_chart():
              stato_nutrizionale.get('Obesity_Type_I', 0), stato_nutrizionale.get('Obesity_Type_II', 0),
              stato_nutrizionale.get('Obesity_Type_III', 0)]
     colors = sns.color_palette('Paired')[0:10]
-    plt.pie(count, color=colors, autopct='%.0f%%', labels=None)
+    plt.pie(count, colors=colors, autopct='%.0f%%', labels=None)
     plt.legend(labels, bbox_to_anchor=(1.05, 1.0), loc='upper left')
     plt.savefig('grafici/Pie Chart', bbox_inches='tight')
 
@@ -64,11 +65,11 @@ def pie_chart():
 
 
 def violin_chart():
-    plt.figure(figsize=(15, 6))  # Imposta le dimensioni della figura
+    plt.figure(figsize=(13, 6))  # Imposta le dimensioni della figura
     sns.violinplot(data=obesity, x=obesity['Nutritional Status'], y=obesity['Age'], hue=obesity['Gender'], split=True,
-                   gap=.1, inner="point", cut=0, bw_adjust=3.0, palette= {'Male':'#71a5d7', 'Female':'#e8638e'},
+                   gap=.1, inner="point", cut=0, bw_adjust=3.0, palette={'Male': '#71a5d7', 'Female': '#e8638e'},
                    order=['Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
-                            'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'])
+                          'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'])
     plt.title('Distribuzione dello stato nutrizionale per età')
 
     plt.savefig('grafici/Grafico a violino', bbox_inches='tight')
@@ -92,7 +93,7 @@ def plot_correlation_matrix(df):
 
     plt.show()
 
-violin_chart()
+
 def plot_scatterplot():
     labels = ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 'Overweight Level II', 'Obesity Type I',
               'Obesity Type II', 'Obesity Type III']
@@ -107,7 +108,7 @@ def plot_scatterplot():
 
     sns.set_palette(sns.color_palette('Paired')[0:10])
 
-    plt.title("Weight and Height of the different classes")
+    plt.title("Dispersione peso e altezza per stato nutrizionale")
     sns.scatterplot(data=data_iw, x="Weight", y="Height")
     sns.scatterplot(data=data_nw, x="Weight", y="Height")
     sns.scatterplot(data=data_ow1, x="Weight", y="Height")
@@ -117,13 +118,16 @@ def plot_scatterplot():
     sns.scatterplot(data=data_ob3, x="Weight", y="Height")
 
     plt.xlabel("Weight")
-    plt.xlabel("Height")
+    plt.ylabel("Height")
     plt.legend(labels)
     plt.savefig('grafici/Scatter Plot', bbox_inches='tight')
 
     plt.show()
 
+
 weight_height()
 BMI()
 pie_chart()
+violin_chart()
+plot_scatterplot()
 plot_correlation_matrix(obesity_no_index)
