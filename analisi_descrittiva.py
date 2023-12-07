@@ -20,17 +20,17 @@ def weight_height():
     numero_bin_height = int((max(obesity['Height']) - min(obesity['Height'])) / larghezza_bin_height)
 
     plt.subplot(1, 2, 1)
-    sns.histplot(obesity['Weight'], bins=numero_bin_weight, color='#2D9596', kde=True, alpha=0.3)
+    sns.histplot(obesity['Weight'], bins=numero_bin_weight, color='#ec7c26', kde=True, alpha=0.5)
     plt.xlabel('Peso')
     plt.ylabel('Frequenza')
     plt.title('Distribuzione del peso')
 
     plt.subplot(1, 2, 2)
-    sns.histplot(obesity['Height'], bins=numero_bin_height, color='#82A0D8', kde=True)
+    sns.histplot(obesity['Height'], bins=numero_bin_height, color='#009090', kde=True,  alpha=0.3)
     plt.xlabel('Altezza')
     plt.ylabel('Frequenza')
     plt.title('Distribuzione dell\'altezza')
-    plt.savefig('grafici/Distribuzione Altezza', bbox_inches='tight')
+    plt.savefig('grafici/Distribuzione Altezza e Peso', bbox_inches='tight')
 
     plt.show()
 
@@ -39,7 +39,7 @@ def BMI():
     obesity['BMI'] = obesity['Weight'] / obesity['Height'] ** 2
 
     sns.color_palette('Paired')
-    sns.kdeplot(obesity, x=obesity['BMI'], hue=obesity['Gender'], fill=True)
+    sns.kdeplot(obesity, x=obesity['BMI'], hue=obesity['Gender'], fill=True, palette={'Male':'#71a5d7', 'Female':'#e8638e'})
     plt.ylabel('Densità')
     plt.title('Distribuzione dell\'indice di massa corporea')
     plt.savefig('grafici/Distribuzione BMI', bbox_inches='tight')
@@ -56,9 +56,22 @@ def pie_chart():
              stato_nutrizionale.get('Obesity_Type_I', 0), stato_nutrizionale.get('Obesity_Type_II', 0),
              stato_nutrizionale.get('Obesity_Type_III', 0)]
     colors = sns.color_palette('Paired')[0:10]
-    plt.pie(count, colors=colors, autopct='%.0f%%', labels=None)
+    plt.pie(count, color=colors, autopct='%.0f%%', labels=None)
     plt.legend(labels, bbox_to_anchor=(1.05, 1.0), loc='upper left')
     plt.savefig('grafici/Pie Chart', bbox_inches='tight')
+
+    plt.show()
+
+
+def violin_chart():
+    plt.figure(figsize=(15, 6))  # Imposta le dimensioni della figura
+    sns.violinplot(data=obesity, x=obesity['Nutritional Status'], y=obesity['Age'], hue=obesity['Gender'], split=True,
+                   gap=.1, inner="point", cut=0, bw_adjust=3.0, palette= {'Male':'#71a5d7', 'Female':'#e8638e'},
+                   order=['Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
+                            'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'])
+    plt.title('Distribuzione dello stato nutrizionale per età')
+
+    plt.savefig('grafici/Grafico a violino', bbox_inches='tight')
 
     plt.show()
 
@@ -72,7 +85,6 @@ def plot_correlation_matrix(df):
 
     corr = df.corr()
     plt.figure(figsize=(16, 12))
-    sns.color_palette('Paired')
     sns.heatmap(corr, annot=True, cmap='crest')
 
     plt.title('Correlation Matrix')
@@ -80,7 +92,7 @@ def plot_correlation_matrix(df):
 
     plt.show()
 
-
+violin_chart()
 weight_height()
 BMI()
 pie_chart()
