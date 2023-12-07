@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import joypy
 
 file = 'data/obesity_dataset_clean.csv'
 obesity = pd.read_csv(file)
@@ -212,6 +213,15 @@ def waffle_chart(column):
     plt.show()
 
 
+def strip_plot_water(df):
+    sns.set(style="whitegrid")
+    plt.figure(figsize=(12, 8))
+    colors = sns.color_palette('Paired')[0:7]
+    sns.stripplot(x='Nutritional Status', y='Daily Water Consumption', data=df, palette=colors, jitter=True, alpha=0.5)
+    plt.title('Strip Plot of Water Consumption vs Nutritional Status')
+    plt.savefig('grafici/water consumption.png', bbox_inches='tight')
+    plt.show()
+
 
 #weight_height()
 #BMI()
@@ -222,8 +232,8 @@ def waffle_chart(column):
 #plot_scatterplot()
 #car_plot(obesity_replaced)
 #join_plot(obesity_replaced)
-
-waffle_chart("High Caloric Food Consumption")
+#waffle_chart("High Caloric Food Consumption")
+strip_plot_water(obesity_replaced)
 
 
 
