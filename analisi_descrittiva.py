@@ -144,10 +144,25 @@ def strip_plot(df):
     plt.show()
 
 
+def car_plot(df):
+    df['Nutritional Status']\
+        = df['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
+        .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
+        .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
+        .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
+    columns = df[['Weight', 'Nutritional Status', 'Calories Consumption Monitoring']]
+    sns.catplot(data=columns, kind="swarm", x="Nutritional Status", y="Weight", hue="Calories Consumption Monitoring")
+    plt.xlabel('Nutritional Status')
+    plt.xticks(rotation=45)
+    plt.ylabel('Weight')
+    plt.savefig('grafici/Car Plot.png', bbox_inches='tight', dpi=100)
+    plt.show()
+
 #weight_height()
 #BMI()
 #violin_chart()
 #pie_chart()
 #plot_correlation_matrix(obesity_no_index)
 #strip_plot(obesity)
-plot_scatterplot()
+#plot_scatterplot()
+#car_plot(obesity)
