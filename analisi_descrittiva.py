@@ -80,8 +80,38 @@ def plot_correlation_matrix(df):
 
     plt.show()
 
+def plot_scatterplot():
+    labels = ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 'Overweight Level II', 'Obesity Type I',
+              'Obesity Type II', 'Obesity Type III']
+
+    data_nw = obesity[obesity["Nutritional Status"] == "Normal_Weight"]
+    data_ow1 = obesity[obesity["Nutritional Status"] == "Overweight_Level_I"]
+    data_ow2 = obesity[obesity["Nutritional Status"] == "Overweight_Level_II"]
+    data_ob1 = obesity[obesity["Nutritional Status"] == "Obesity_Type_I"]
+    data_ob2 = obesity[obesity["Nutritional Status"] == "Obesity_Type_II"]
+    data_ob3 = obesity[obesity["Nutritional Status"] == "Obesity_Type_III"]
+    data_iw = obesity[obesity["Nutritional Status"] == "Insufficient_Weight"]
+
+    sns.set_palette(sns.color_palette('Paired')[0:10])
+
+    plt.title("Weight and Height of the different classes")
+    sns.scatterplot(data=data_iw, x="Weight", y="Height")
+    sns.scatterplot(data=data_nw, x="Weight", y="Height")
+    sns.scatterplot(data=data_ow1, x="Weight", y="Height")
+    sns.scatterplot(data=data_ow2, x="Weight", y="Height")
+    sns.scatterplot(data=data_ob1, x="Weight", y="Height")
+    sns.scatterplot(data=data_ob2, x="Weight", y="Height")
+    sns.scatterplot(data=data_ob3, x="Weight", y="Height")
+
+    plt.xlabel("Weight")
+    plt.xlabel("Height")
+    plt.legend(labels)
+    plt.savefig('grafici/Scatter Plot', bbox_inches='tight')
+
+    plt.show()
 
 weight_height()
 BMI()
 pie_chart()
 plot_correlation_matrix(obesity_no_index)
+plot_scatterplot()
