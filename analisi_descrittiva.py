@@ -1,5 +1,5 @@
 from sklearn.preprocessing import LabelEncoder
-from pywaffle import Waffle
+#from pywaffle import Waffle
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -30,16 +30,16 @@ def weight_height():
 
     plt.subplot(1, 2, 1)
     sns.histplot(obesity['Weight'], bins=numero_bin_weight, color='#ec7c26', kde=True, alpha=0.5)
-    plt.xlabel('Peso')
-    plt.ylabel('Frequenza')
-    plt.title('Distribuzione del peso')
+    plt.xlabel('Weight')
+    plt.ylabel('Frequency')
+    plt.title('Weight distribution')
 
     plt.subplot(1, 2, 2)
     sns.histplot(obesity['Height'], bins=numero_bin_height, color='#009090', kde=True, alpha=0.3)
-    plt.xlabel('Altezza')
-    plt.ylabel('Frequenza')
-    plt.title('Distribuzione dell\'altezza')
-    plt.savefig('grafici/Distribuzione Altezza e Peso', bbox_inches='tight')
+    plt.xlabel('Height')
+    plt.ylabel('Frequency')
+    plt.title('Height distribution')
+    plt.savefig('grafici/weight and height distribution', bbox_inches='tight')
 
     plt.show()
 
@@ -50,9 +50,9 @@ def BMI():
     sns.color_palette('Paired')
     sns.kdeplot(obesity, x=obesity['BMI'], hue=obesity['Gender'], fill=True,
                 palette={'Male': '#71a5d7', 'Female': '#e8638e'})
-    plt.ylabel('Densità')
-    plt.title('Distribuzione dell\'indice di massa corporea')
-    plt.savefig('grafici/Distribuzione BMI', bbox_inches='tight')
+    plt.ylabel('Density')
+    plt.title('BMI distribution')
+    plt.savefig('grafici/BMI distribution', bbox_inches='tight')
 
     plt.show()
 
@@ -68,33 +68,35 @@ def pie_chart():
     colors = sns.color_palette('Paired')[0:8]
     plt.pie(count, colors=colors, autopct='%.0f%%', labels=None)
     plt.legend(labels, bbox_to_anchor=(1.05, 1.0), loc='upper left')
-    plt.savefig('grafici/Pie Chart', bbox_inches='tight')
+    plt.savefig('grafici/nutritional status pie chart', bbox_inches='tight')
 
     plt.show()
 
 
 def violin_chart():
-    plt.figure(figsize=(13, 6))  # Imposta le dimensioni della figura
+    plt.figure(figsize=(13, 6))
     sns.violinplot(data=obesity_replaced, x=obesity_replaced['Nutritional Status'], y=obesity_replaced['Age'], hue=obesity_replaced['Gender'], split=True,
                    gap=.1, inner="point", cut=0, bw_adjust=3.0, palette={'Male': '#71a5d7', 'Female': '#e8638e'},
                    order=order)
-    plt.title('Distribuzione dello stato nutrizionale per età')
+    plt.title('Nutritional status distribution by age')
 
-    plt.savefig('grafici/Grafico a violino', bbox_inches='tight')
+    plt.savefig('grafici/nutritional status by age', bbox_inches='tight')
 
     plt.show()
 
 
 def family_history_with_overweight():
+    obesity['Family History Of Overweight'] = obesity['Family History Of Overweight'].replace({0: '0', 1: '1'})
+
     color = sns.set_palette(sns.color_palette('Paired')[0:8])
     sns.histplot(data=obesity, x=obesity['Family History Of Overweight'], hue=obesity['Nutritional Status'],
                  multiple="dodge", shrink=.8,
                  hue_order=['Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I', 'Overweight_Level_II',
                             'Obesity_Type_I',
                             'Obesity_Type_II', 'Obesity_Type_III'], palette=color)
-    plt.title('Casi di sovrappeso in famiglia per stato nutrizionale')
+    plt.title('Family history of overweight by nutritional status')
 
-    plt.savefig('grafici/Family history chart', bbox_inches='tight')
+    plt.savefig('grafici/family history chart', bbox_inches='tight')
 
     plt.show()
 
@@ -111,7 +113,7 @@ def plot_correlation_matrix(df):
     sns.heatmap(corr, annot=True, cmap='crest')
 
     plt.title('Correlation Matrix')
-    plt.savefig('grafici/Correlation Matrix', bbox_inches='tight')
+    plt.savefig('grafici/correlation matrix', bbox_inches='tight')
 
     plt.show()
 
@@ -130,7 +132,6 @@ def plot_scatterplot():
 
     sns.set_palette(sns.color_palette('Paired')[0:10])
 
-    plt.title("Dispersione peso e altezza per stato nutrizionale")
     sns.scatterplot(data=data_iw, x="Weight", y="Height")
     sns.scatterplot(data=data_nw, x="Weight", y="Height")
     sns.scatterplot(data=data_ow1, x="Weight", y="Height")
@@ -139,10 +140,11 @@ def plot_scatterplot():
     sns.scatterplot(data=data_ob2, x="Weight", y="Height")
     sns.scatterplot(data=data_ob3, x="Weight", y="Height")
 
+    plt.title("Weight and height scatter by nutritional status")
     plt.xlabel("Weight")
     plt.ylabel("Height")
     plt.legend(labels)
-    plt.savefig('grafici/Scatter Plot', bbox_inches='tight')
+    plt.savefig('grafici/weight and height scatter', bbox_inches='tight')
     plt.show()
 
 
@@ -150,9 +152,11 @@ def boxen_plot():
     columns = obesity_replaced[['Weight', 'Nutritional Status', 'Calories Consumption Monitoring']]
 
     sns.boxenplot(data=columns, x="Nutritional Status", y="Weight", hue="Calories Consumption Monitoring", order=order)
+
+    plt.title("Calories consumption monitoring by weight and nutritional status")
     plt.xlabel('Nutritional Status')
     plt.ylabel('Weight')
-    plt.savefig('grafici/Boxen Plot.png', bbox_inches='tight', dpi=100)
+    plt.savefig('grafici/calories consumption monitoring plot.png', bbox_inches='tight', dpi=100)
     plt.show()
 
 
@@ -162,18 +166,20 @@ def join_plot(df):
     colors = sns.color_palette('Paired')[0:7]
     sns.jointplot(data=columns, y="Vegetables Consumption", x="BMI", hue="Nutritional Status", hue_order=order,
                   palette=colors)
-    plt.title('Correlation Between Vegetables Consumption and BMI', loc='center', wrap=True)
+    plt.title('Correlation between vegetables consumption and BMI', loc='center', wrap=True)
     plt.xlabel('Weight')
-    plt.ylabel('Vegetables Consumption')
-    plt.savefig('grafici/Join Plot.png', bbox_inches='tight')
+    plt.ylabel('Vegetables consumption')
+    plt.savefig('grafici/vegetables consumption and BMI join plot.png', bbox_inches='tight')
     plt.show()
 
-
-'''weight_height()
+'''
+weight_height()
 BMI()
 violin_chart()
 pie_chart()
 plot_correlation_matrix(obesity_no_index)
-plot_scatterplot()'''
+plot_scatterplot()
 boxen_plot()
 join_plot(obesity_replaced)
+'''
+family_history_with_overweight()
