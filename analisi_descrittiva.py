@@ -56,7 +56,7 @@ def pie_chart():
              stato_nutrizionale.get('Overweight_Level_I', 0), stato_nutrizionale.get('Overweight_Level_II', 0),
              stato_nutrizionale.get('Obesity_Type_I', 0), stato_nutrizionale.get('Obesity_Type_II', 0),
              stato_nutrizionale.get('Obesity_Type_III', 0)]
-    colors = sns.color_palette('Paired')[0:10]
+    colors = sns.color_palette('Paired')[0:8]
     plt.pie(count, colors=colors, autopct='%.0f%%', labels=None)
     plt.legend(labels, bbox_to_anchor=(1.05, 1.0), loc='upper left')
     plt.savefig('grafici/Pie Chart', bbox_inches='tight')
@@ -73,6 +73,20 @@ def violin_chart():
     plt.title('Distribuzione dello stato nutrizionale per età')
 
     plt.savefig('grafici/Grafico a violino', bbox_inches='tight')
+
+    plt.show()
+
+
+def family_history_with_overweight():
+    color = sns.set_palette(sns.color_palette('Paired')[0:8])
+    sns.histplot(data=obesity, x=obesity['Family History Of Overweight'], hue=obesity['Nutritional Status'],
+                 multiple="dodge", shrink=.8,
+                 hue_order=['Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I', 'Overweight_Level_II',
+                            'Obesity_Type_I',
+                            'Obesity_Type_II', 'Obesity_Type_III'], palette=color)
+    plt.title('Casi di sovrappeso in famiglia per stato nutrizionale')
+
+    plt.savefig('grafici/Family history chart', bbox_inches='tight')
 
     plt.show()
 
@@ -125,9 +139,12 @@ def plot_scatterplot():
     plt.show()
 
 
-weight_height()
+family_history_with_overweight()
+pie_chart()
+'''weight_height()
 BMI()
 pie_chart()
 violin_chart()
 plot_scatterplot()
 plot_correlation_matrix(obesity_no_index)
+'''
