@@ -189,35 +189,29 @@ def join_plot(df):
 
 def waffle_chart(column):
     values = obesity[column].value_counts()
-
-    '''df = pd.DataFrame({
-        column: ['1', '0'],
-        'Number': [int((values.get(1)/(values.get(1)+values.get(0))*100)), int((values.get(0)/(values.get(1)+values.get(0))*100))]}
-    )
-'''
-    values = obesity[column].value_counts()
     df = {
-        '1': int((values.get(1)/(values.get(1)+values.get(0))*100)),
-        '0': int((values.get(0)/(values.get(1)+values.get(0))*100))
-        }
+        '1': round((values.get(1) / (values.get(1) + values.get(0)) * 100)),
+        '0': round((values.get(0) / (values.get(1) + values.get(0)) * 100))
+    }
 
-
-
-    fig = plt.figure(
+    plt.figure(
         FigureClass=Waffle,
-        values=df,
-        icons = 'face-smile',
-        icon_size=1,
-        rows=10,
-        columns=10,
-        icon_legend=True
+        rows=5,
+        values=list(df.values()),
+        icons='child',
+        icon_legend=True,
+        font_size=15,
+        legend={
+            'labels': list(df.keys()),
+            'loc': 'upper left',
+            'bbox_to_anchor': (1, 1)
+        }
     )
-
-    fig.gca().set_facecolor('#EEEEEE')
-    fig.set_facecolor('#EEEEEE')
-    plt.title('Percentage of ')
-    plt.savefig('grafici/' + column + 'Waffle.png')
+    plt.title(column)
+    plt.savefig('grafici/fig.png',bbox_inches='tight')
     plt.show()
+
+
 
 #weight_height()
 #BMI()
@@ -230,6 +224,10 @@ def waffle_chart(column):
 #join_plot(obesity_replaced)
 
 waffle_chart("High Caloric Food Consumption")
+
+
+
+
 
 
 
