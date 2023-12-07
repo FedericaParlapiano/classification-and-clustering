@@ -186,6 +186,39 @@ def join_plot(df):
     plt.ylabel('Vegetables Consumption')
     plt.savefig('grafici/Join Plot.png', bbox_inches='tight')
     plt.show()
+
+def waffle_chart(column):
+    values = obesity[column].value_counts()
+
+    '''df = pd.DataFrame({
+        column: ['1', '0'],
+        'Number': [int((values.get(1)/(values.get(1)+values.get(0))*100)), int((values.get(0)/(values.get(1)+values.get(0))*100))]}
+    )
+'''
+    values = obesity[column].value_counts()
+    df = {
+        '1': int((values.get(1)/(values.get(1)+values.get(0))*100)),
+        '0': int((values.get(0)/(values.get(1)+values.get(0))*100))
+        }
+
+
+
+    fig = plt.figure(
+        FigureClass=Waffle,
+        values=df,
+        icons = 'face-smile',
+        icon_size=1,
+        rows=10,
+        columns=10,
+        icon_legend=True
+    )
+
+    fig.gca().set_facecolor('#EEEEEE')
+    fig.set_facecolor('#EEEEEE')
+    plt.title('Percentage of ')
+    plt.savefig('grafici/' + column + 'Waffle.png')
+    plt.show()
+
 #weight_height()
 #BMI()
 #violin_chart()
@@ -195,3 +228,8 @@ def join_plot(df):
 #plot_scatterplot()
 #car_plot(obesity_replaced)
 #join_plot(obesity_replaced)
+
+waffle_chart("High Caloric Food Consumption")
+
+
+
