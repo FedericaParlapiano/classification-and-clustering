@@ -131,3 +131,32 @@ pie_chart()
 violin_chart()
 plot_scatterplot()
 plot_correlation_matrix(obesity_no_index)
+
+
+def strip_plot(df):
+    df['Nutritional Status'] =\
+        df['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight')\
+            .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I')\
+            .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I')\
+            .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
+    variables = df[['Physical Activity Frequency', 'Transportation Used', 'Nutritional Status']]
+    colors = sns.color_palette('Paired')[0:7]
+    nutritional_status = ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 'Overweight Level II',
+                          'Obesity Type I', 'Obesity Type II', 'Obesity Type III']
+    sns.stripplot(data=variables, x="Physical Activity Frequency", y="Transportation Used", hue_order=nutritional_status,
+                  hue="Nutritional Status",
+                  palette=colors)
+    plt.xlabel('Physical Activity Frequency')
+    plt.ylabel('Transportation Used')
+    plt.title('Strip Plot by Category')
+    plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    plt.savefig('grafici/Strip Plot', bbox_inches='tight')
+    plt.show()
+
+
+#weight_height()
+#BMI()
+#pie_chart()
+#plot_correlation_matrix(obesity_no_index)
+#scatter_with_regression(obesity)
+strip_plot(obesity)
