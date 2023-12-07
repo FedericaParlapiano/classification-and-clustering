@@ -121,17 +121,7 @@ def plot_scatterplot():
     plt.ylabel("Height")
     plt.legend(labels)
     plt.savefig('grafici/Scatter Plot', bbox_inches='tight')
-
     plt.show()
-
-
-weight_height()
-BMI()
-pie_chart()
-violin_chart()
-plot_scatterplot()
-plot_correlation_matrix(obesity_no_index)
-
 
 def strip_plot(df):
     df['Nutritional Status'] =\
@@ -148,7 +138,7 @@ def strip_plot(df):
                   palette=colors)
     plt.xlabel('Physical Activity Frequency')
     plt.ylabel('Transportation Used')
-    plt.title('Strip Plot by Category')
+    plt.title('Strip Plot per Stato Nutrizionale')
     plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
     plt.savefig('grafici/Strip Plot', bbox_inches='tight')
     plt.show()
@@ -156,7 +146,8 @@ def strip_plot(df):
 
 #weight_height()
 #BMI()
+#violin_chart()
 #pie_chart()
 #plot_correlation_matrix(obesity_no_index)
-#scatter_with_regression(obesity)
-strip_plot(obesity)
+#strip_plot(obesity)
+plot_scatterplot()
