@@ -8,17 +8,17 @@ file = 'data/obesity_dataset_clean.csv'
 obesity = pd.read_csv(file)
 obesity_no_index = obesity.iloc[:, 1:]
 obesity_replaced = obesity.copy()
-obesity_replaced['Nutritional Status']\
-        = obesity_replaced['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
-        .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
-        .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
-        .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
+obesity_replaced['Nutritional Status'] \
+    = obesity_replaced['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
+    .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
+    .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
+    .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
 order = ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 'Overweight Level II',
-                      'Obesity Type I', 'Obesity Type II', 'Obesity Type III']
+         'Obesity Type I', 'Obesity Type II', 'Obesity Type III']
 
 
 def weight_height():
-    plt.figure(figsize=(12, 6))  # Imposta le dimensioni della figura
+    plt.figure(figsize=(12, 6))
 
     # calcolo larghezza del bin secondo la regola di Scott
     larghezza_bin_weight = 3.5 * np.std(obesity['Weight']) / (len(obesity['Weight']) ** (1 / 3))
@@ -74,10 +74,9 @@ def pie_chart():
 
 def violin_chart():
     plt.figure(figsize=(13, 6))  # Imposta le dimensioni della figura
-    sns.violinplot(data=obesity, x=obesity['Nutritional Status'], y=obesity['Age'], hue=obesity['Gender'], split=True,
+    sns.violinplot(data=obesity_replaced, x=obesity_replaced['Nutritional Status'], y=obesity_replaced['Age'], hue=obesity_replaced['Gender'], split=True,
                    gap=.1, inner="point", cut=0, bw_adjust=3.0, palette={'Male': '#71a5d7', 'Female': '#e8638e'},
-                   order=['Insufficient_Weight', 'Normal_Weight', 'Overweight_Level_I',
-                          'Overweight_Level_II', 'Obesity_Type_I', 'Obesity_Type_II', 'Obesity_Type_III'])
+                   order=order)
     plt.title('Distribuzione dello stato nutrizionale per età')
 
     plt.savefig('grafici/Grafico a violino', bbox_inches='tight')
@@ -145,30 +144,12 @@ def plot_scatterplot():
     plt.savefig('grafici/Scatter Plot', bbox_inches='tight')
     plt.show()
 
-def strip_plot(df):
-    variables = df[['Physical Activity Frequency', 'Transportation Used', 'Nutritional Status']]
-    colors = sns.color_palette('Paired')[0:7]
-    sns.stripplot(data=variables, x="Physical Activity Frequency", y="Transportation Used", hue_order=order,
-                  hue="Nutritional Status",
-                  palette=colors)
-    plt.xlabel('Physical Activity Frequency')
-    plt.ylabel('Transportation Used')
-    plt.title('Strip Plot per Stato Nutrizionale')
-    plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-    plt.savefig('grafici/Strip Plot', bbox_inches='tight')
-    plt.show()
 
+def boxen_plot():
+    columns = obesity_replaced[['Weight', 'Nutritional Status', 'Calories Consumption Monitoring']]
 
-def car_plot(df):
-    df['Nutritional Status']\
-        = df['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
-        .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
-        .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
-        .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
-    columns = df[['Weight', 'Nutritional Status', 'Calories Consumption Monitoring']]
-    sns.catplot(data=columns, kind="swarm", x="Nutritional Status", y="Weight", hue="Calories Consumption Monitoring")
+    sns.boxenplot(data=columns, x="Nutritional Status", y="Weight", hue="Calories Consumption Monitoring", order=order)
     plt.xlabel('Nutritional Status')
-    plt.xticks(rotation=45)
     plt.ylabel('Weight')
     plt.savefig('grafici/Car Plot.png', bbox_inches='tight', dpi=100)
     plt.show()
@@ -185,12 +166,13 @@ def join_plot(df):
     plt.ylabel('Vegetables Consumption')
     plt.savefig('grafici/Join Plot.png', bbox_inches='tight')
     plt.show()
-#weight_height()
-#BMI()
-#violin_chart()
-#pie_chart()
-#plot_correlation_matrix(obesity_no_index)
-#strip_plot(obesity)
-#plot_scatterplot()
-#car_plot(obesity_replaced)
-#join_plot(obesity_replaced)
+
+
+'''weight_height()
+BMI()
+violin_chart()
+pie_chart()
+plot_correlation_matrix(obesity_no_index)
+plot_scatterplot()'''
+boxen_plot()
+join_plot(obesity_replaced)
