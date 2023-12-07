@@ -30,6 +30,7 @@ def weight_height():
     plt.xlabel('Altezza')
     plt.ylabel('Frequenza')
     plt.title('Distribuzione dell\'altezza')
+    plt.savefig('grafici/Distribuzione Altezza', bbox_inches='tight')
 
     plt.show()
 
@@ -41,6 +42,7 @@ def BMI():
     sns.kdeplot(obesity, x=obesity['BMI'], hue=obesity['Gender'], fill=True)
     plt.ylabel('Densità')
     plt.title('Distribuzione dell\'indice di massa corporea')
+    plt.savefig('grafici/Distribuzione BMI', bbox_inches='tight')
 
     plt.show()
 
@@ -55,7 +57,9 @@ def pie_chart():
              stato_nutrizionale.get('Obesity_Type_III', 0)]
     colors = sns.color_palette('Paired')[0:10]
     plt.pie(count, colors=colors, autopct='%.0f%%', labels=None)
-    plt.legend(labels, loc='best')
+    plt.legend(labels, bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    plt.savefig('grafici/Pie Chart', bbox_inches='tight')
+
     plt.show()
 
 
@@ -73,6 +77,7 @@ def plot_correlation_matrix(df):
 
     plt.title('Correlation Matrix')
     plt.savefig('grafici/Correlation Matrix', bbox_inches='tight')
+
     plt.show()
 
 
