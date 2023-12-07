@@ -151,7 +151,7 @@ def boxen_plot():
     sns.boxenplot(data=columns, x="Nutritional Status", y="Weight", hue="Calories Consumption Monitoring", order=order)
     plt.xlabel('Nutritional Status')
     plt.ylabel('Weight')
-    plt.savefig('grafici/Car Plot.png', bbox_inches='tight', dpi=100)
+    plt.savefig('grafici/Boxen Plot.png', bbox_inches='tight', dpi=100)
     plt.show()
 
 
