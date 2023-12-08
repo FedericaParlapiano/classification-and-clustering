@@ -147,6 +147,7 @@ def plot_scatterplot():
     plt.savefig('grafici/Scatter Plot', bbox_inches='tight')
     plt.show()
 
+
 def strip_plot(df):
     variables = df[['Physical Activity Frequency', 'Transportation Used', 'Nutritional Status']]
     colors = sns.color_palette('Paired')[0:7]
@@ -188,6 +189,7 @@ def join_plot(df):
     plt.savefig('grafici/Join Plot.png', bbox_inches='tight')
     plt.show()
 
+
 def waffle_chart(column):
     values = obesity[column].value_counts()
     df = {
@@ -217,8 +219,9 @@ def strip_plot_water(df):
     sns.set(style="whitegrid")
     plt.figure(figsize=(12, 8))
     colors = sns.color_palette('Paired')[0:7]
-    sns.stripplot(x='Nutritional Status', y='Daily Water Consumption', data=df, palette=colors, jitter=True, alpha=0.5)
-    plt.title('Strip Plot of Water Consumption vs Nutritional Status')
+    sns.stripplot(x='Nutritional Status', y='Daily Water Consumption', data=df, palette=colors, jitter=True, alpha=0.5,
+                  order=order)
+    plt.title('Strip Plot of Daily Water Consumption and Nutritional Status')
     plt.savefig('grafici/water consumption.png', bbox_inches='tight')
     plt.show()
 
@@ -234,10 +237,3 @@ def strip_plot_water(df):
 #join_plot(obesity_replaced)
 #waffle_chart("High Caloric Food Consumption")
 strip_plot_water(obesity_replaced)
-
-
-
-
-
-
-
