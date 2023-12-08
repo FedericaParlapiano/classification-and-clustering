@@ -177,7 +177,7 @@ def car_plot(df):
     plt.show()
 
 
-def join_plot(df):
+def joint_plot(df):
     df['BMI'] = df['Weight'] / df['Height'] ** 2
     columns = df[['Vegetables Consumption', 'BMI', 'Nutritional Status']]
     colors = sns.color_palette('Paired')[0:7]
@@ -201,9 +201,9 @@ def waffle_chart(column):
         FigureClass=Waffle,
         rows=5,
         values=list(df.values()),
-        icons='child',
+        icons='child-reaching',
         icon_legend=True,
-        font_size=15,
+        font_size=25,
         legend={
             'labels': list(df.keys()),
             'loc': 'upper left',
@@ -225,15 +225,14 @@ def strip_plot_water(df):
     plt.savefig('grafici/water consumption.png', bbox_inches='tight')
     plt.show()
 
+# weight_height()
+# BMI()
+# violin_chart()
+# pie_chart()
+# plot_correlation_matrix(obesity_no_index)
+# strip_plot(obesity)
+# plot_scatterplot()
+# car_plot(obesity_replaced)
+# joint_plot(obesity_replaced)
 
-#weight_height()
-#BMI()
-#violin_chart()
-#pie_chart()
-#plot_correlation_matrix(obesity_no_index)
-#strip_plot(obesity)
-#plot_scatterplot()
-#car_plot(obesity_replaced)
-#join_plot(obesity_replaced)
-#waffle_chart("High Caloric Food Consumption")
-strip_plot_water(obesity_replaced)
+waffle_chart("High Caloric Food Consumption")
