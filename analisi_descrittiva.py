@@ -269,8 +269,9 @@ def histograms(title, column, df):
     plt.grid()
     return fig
 
-fig = histograms('Age Distribution', 'Age', obesity_replaced)
-plt.show()
+age_hist = histograms('Age Distribution', 'Age', obesity_replaced)
+height_hist = histograms('Height Distribution', 'Height', obesity_replaced)
+weight_hist = histograms('Weight Distribution', 'Weight', obesity_replaced)
 
 # weight_height()
 # BMI()
