@@ -18,10 +18,10 @@ def processing(df):
                             "NCP": "Main Meals Number",
                             "CAEC": "Food Consumption Between Meals",
                             "SMOKE": "Smoke",
-                            "CH2O": "Daily Water Consumption",
+                            "CH2O": "Daily Water Consumption", #
                             "SCC": "Calories Consumption Monitoring",
-                            "FAF": "Physical Activity Frequency",
-                            "TUE": "Time Using Technology Devices",
+                            "FAF": "Physical Activity Frequency", #
+                            "TUE": "Time Using Technology Devices", #
                             "CALC": "Alcohol Consumption",
                             "MTRANS": "Transportation Used",
                             "NObeyesdad": "Nutritional Status"})

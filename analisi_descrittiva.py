@@ -9,21 +9,21 @@ file = 'data/obesity_dataset_clean.csv'
 obesity = pd.read_csv(file)
 obesity_no_index = obesity.iloc[:, 1:]
 obesity_replaced = obesity.copy()
-obesity_replaced['Nutritional Status']\
-        = obesity_replaced['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
-        .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
-        .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
-        .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
+obesity_replaced['Nutritional Status'] \
+    = obesity_replaced['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
+    .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
+    .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
+    .replace('Obesity_Type_II', 'Obesity Type II').replace('Obesity_Type_III', 'Obesity Type III')
 order = ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 'Overweight Level II',
-                      'Obesity Type I', 'Obesity Type II', 'Obesity Type III']
+         'Obesity Type I', 'Obesity Type II', 'Obesity Type III']
 
-data_iw = obesity_replaced[obesity_replaced['Nutritional Status']=='Insufficient Weight']
-data_nw = obesity_replaced[obesity_replaced['Nutritional Status']=='Normal Weight']
-data_ol1 = obesity_replaced[obesity_replaced['Nutritional Status']=='Overweight Level I']
-data_ol2 = obesity_replaced[obesity_replaced['Nutritional Status']=='Overweight Level II']
-data_ot1 = obesity_replaced[obesity_replaced['Nutritional Status']=='Obesity Type I']
-data_ot2 = obesity_replaced[obesity_replaced['Nutritional Status']=='Obesity Type II']
-data_ot3 = obesity_replaced[obesity_replaced['Nutritional Status']=='Obesity Type III']
+data_iw = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Insufficient Weight']
+data_nw = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Normal Weight']
+data_ol1 = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Overweight Level I']
+data_ol2 = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Overweight Level II']
+data_ot1 = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Obesity Type I']
+data_ot2 = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Obesity Type II']
+data_ot3 = obesity_replaced[obesity_replaced['Nutritional Status'] == 'Obesity Type III']
 
 
 def weight_height():
@@ -170,7 +170,7 @@ def strip_plot(df):
 
 
 def car_plot(df):
-    df['Nutritional Status']\
+    df['Nutritional Status'] \
         = df['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
         .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
         .replace('Overweight_Level_II', 'Overweight Level II').replace('Obesity_Type_I', 'Obesity Type I') \
@@ -440,7 +440,8 @@ def strip_plot_water(df):
 
 def distributed_dot_plot(df):
     fig, ax = plt.subplots(figsize=(16, 10), dpi=80)
-    ax.hlines(y=order, xmin=0, xmax=df['Time Using Technology Devices'].max(), color='gray', alpha=0.5, linewidth=.5, linestyles='dashdot')
+    ax.hlines(y=order, xmin=0, xmax=df['Time Using Technology Devices'].max(), color='gray', alpha=0.5, linewidth=.5,
+              linestyles='dashdot')
 
     for i, status in enumerate(order):
         df_status = df[df['Nutritional Status'] == status]
@@ -466,18 +467,33 @@ def distributed_dot_plot(df):
     plt.show()
 
 
-def histograms(title, column, df):
+def histograms():
+    fig, axes = plt.subplots(2, 3)
     colors = sns.color_palette('Paired')[0:7]
-    fig = sns.histplot(df, x=column, hue="Nutritional Status", element="step", palette=colors, hue_order=order)
-    plt.figure(figsize=(8, 5))
-    plt.title(title)
-    plt.grid()
-    return fig
+    sns.histplot(obesity_replaced, x='Age', hue="Nutritional Status", element="step", palette=colors, hue_order=order,
+                 ax=axes[0, 0], legend=False).set(ylabel=None)
+    axes[0, 0].set_title('Age Distribution')
+    sns.histplot(obesity_replaced, x='Height', hue="Nutritional Status", element="step", palette=colors,
+                 hue_order=order, ax=axes[0, 1], legend=False).set(ylabel=None)
+    axes[0, 1].set_title('Height Distribution')
+    sns.histplot(obesity_replaced, x='Weight', hue="Nutritional Status", element="step", palette=colors,
+                 hue_order=order, ax=axes[0, 2], legend=False).set(ylabel=None)
+    axes[0, 2].set_title('Weight Distribution')
+    sns.histplot(obesity_replaced, x='Daily Water Consumption', hue="Nutritional Status", element="step",
+                 palette=colors, hue_order=order, ax=axes[1, 0], legend=False).set(ylabel=None)
+    axes[1, 0].set_title('Daily Water Consumption Distribution')
+    sns.histplot(obesity_replaced, x='Physical Activity Frequency', hue="Nutritional Status", element="step",
+                 palette=colors, hue_order=order, ax=axes[1, 1], legend=False).set(ylabel=None)
+    axes[1, 1].set_title('Physical Activity Frequency Distribution')
+    sns.histplot(obesity_replaced, x='Time Using Technology Devices', hue="Nutritional Status", element="step",
+                 palette=colors, hue_order=order, ax=axes[1, 2], legend=False).set(ylabel=None)
+    axes[1, 2].set_title('Time Using Technology Devices')
+    fig.legend(labels=order, loc="upper right", fontsize=8.7)
+    fig.text(0.07, 0.5, 'Count', va='center', rotation='vertical')
+    plt.show()
 
-age_hist = histograms('Age Distribution', 'Age', obesity_replaced)
-height_hist = histograms('Height Distribution', 'Height', obesity_replaced)
-weight_hist = histograms('Weight Distribution', 'Weight', obesity_replaced)
 
+histograms()
 # weight_height()
 # BMI()
 # violin_chart()
@@ -489,6 +505,7 @@ weight_hist = histograms('Weight Distribution', 'Weight', obesity_replaced)
 # joint_plot(obesity_replaced)
 # waffle_chart("High Caloric Food Consumption")
 
+# waffle_chart("High Caloric Food Consumption")
 
 #distributed_dot_plot(obesity_replaced)
 waffle_charts()
