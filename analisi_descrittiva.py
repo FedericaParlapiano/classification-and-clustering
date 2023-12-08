@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import joypy
 
 file = 'data/obesity_dataset_clean.csv'
 obesity = pd.read_csv(file)
@@ -225,6 +224,34 @@ def strip_plot_water(df):
     plt.savefig('grafici/water consumption.png', bbox_inches='tight')
     plt.show()
 
+
+def distributed_dot_plot(df):
+    fig, ax = plt.subplots(figsize=(16, 10), dpi=80)
+    ax.hlines(y=order, xmin=0, xmax=df['Time Using Technology Devices'].max(), color='gray', alpha=0.5, linewidth=.5, linestyles='dashdot')
+
+    for i, status in enumerate(order):
+        df_status = df[df['Nutritional Status'] == status]
+        ax.scatter(x=df_status['Time Using Technology Devices'], y=np.repeat(i, df_status.shape[0]),
+                   s=75, edgecolors='gray', c='w', alpha=0.5)
+        ax.scatter(x=df_status['Time Using Technology Devices'].median(), y=i, s=75, c='firebrick')
+
+    red_patch = plt.plot([], [], marker="o", ms=10, ls="", mec=None, color='firebrick', label="Median")
+    plt.legend(handles=red_patch)
+    ax.set_title('Distribution of Time Using Technology by Nutritional Status', fontdict={'size': 22})
+    ax.set_ylabel('Nutritional Status', alpha=0.7)
+    ax.set_xticks(np.arange(0, df['Time Using Technology Devices'].max() + 2, 2))
+    ax.set_xlabel('Time Using Technology Devices', alpha=0.7)
+    ax.set_yticks(np.arange(len(df['Nutritional Status'].unique())))
+    ax.set_yticklabels(df['Nutritional Status'].unique(), fontdict={'horizontalalignment': 'right'}, alpha=0.7)
+    plt.xticks(alpha=0.7)
+    plt.gca().spines["top"].set_visible(False)
+    plt.gca().spines["bottom"].set_visible(False)
+    plt.gca().spines["right"].set_visible(False)
+    plt.gca().spines["left"].set_visible(False)
+    plt.grid(axis='both', alpha=.4, linewidth=.1)
+    plt.savefig('grafici/distribution of time using technology', bbox_inches='tight')
+    plt.show()
+
 # weight_height()
 # BMI()
 # violin_chart()
@@ -234,5 +261,7 @@ def strip_plot_water(df):
 # plot_scatterplot()
 # car_plot(obesity_replaced)
 # joint_plot(obesity_replaced)
+# waffle_chart("High Caloric Food Consumption")
 
-waffle_chart("High Caloric Food Consumption")
+
+distributed_dot_plot(obesity_replaced)
