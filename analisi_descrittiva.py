@@ -17,6 +17,14 @@ obesity_replaced['Nutritional Status']\
 order = ['Insufficient Weight', 'Normal Weight', 'Overweight Level I', 'Overweight Level II',
                       'Obesity Type I', 'Obesity Type II', 'Obesity Type III']
 
+data_iw = obesity_replaced[obesity_replaced['Nutritional Status']=='Insufficient Weight']
+data_nw = obesity_replaced[obesity_replaced['Nutritional Status']=='Normal Weight']
+data_ol1 = obesity_replaced[obesity_replaced['Nutritional Status']=='Overweight Level I']
+data_ol2 = obesity_replaced[obesity_replaced['Nutritional Status']=='Overweight Level II']
+data_ot1 = obesity_replaced[obesity_replaced['Nutritional Status']=='Obesity Type I']
+data_ot2 = obesity_replaced[obesity_replaced['Nutritional Status']=='Obesity Type II']
+data_ot3 = obesity_replaced[obesity_replaced['Nutritional Status']=='Obesity Type III']
+
 
 def weight_height():
     plt.figure(figsize=(12, 6))  # Imposta le dimensioni della figura
@@ -252,6 +260,18 @@ def distributed_dot_plot(df):
     plt.savefig('grafici/distribution of time using technology', bbox_inches='tight')
     plt.show()
 
+
+def histograms(title, column, df):
+    colors = sns.color_palette('Paired')[0:7]
+    fig = sns.histplot(df, x=column, hue="Nutritional Status", element="step", palette=colors, hue_order=order)
+    plt.figure(figsize=(8, 5))
+    plt.title(title)
+    plt.grid()
+    return fig
+
+fig = histograms('Age Distribution', 'Age', obesity_replaced)
+plt.show()
+
 # weight_height()
 # BMI()
 # violin_chart()
@@ -265,3 +285,4 @@ def distributed_dot_plot(df):
 
 
 distributed_dot_plot(obesity_replaced)
+#waffle_chart("High Caloric Food Consumption")
