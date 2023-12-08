@@ -197,28 +197,233 @@ def joint_plot(df):
     plt.show()
 
 
-def waffle_chart(column):
-    values = obesity[column].value_counts()
-    df = {
+def waffle_charts():
+    values = obesity['High Caloric Food Consumption'].value_counts()
+    df_calories = {
+        '1': round((values.get(1) / (values.get(1) + values.get(0)) * 100)),
+        '0': round((values.get(0) / (values.get(1) + values.get(0)) * 100))
+    }
+
+    values = obesity['Smoke'].value_counts()
+    df_smoke = {
+        '1': round((values.get(1) / (values.get(1) + values.get(0)) * 100)),
+        '0': round((values.get(0) / (values.get(1) + values.get(0)) * 100))
+    }
+
+    values = obesity['Family History Of Overweight'].value_counts()
+    df_family = {
+        '1': round((values.get(1) / (values.get(1) + values.get(0)) * 100)),
+        '0': round((values.get(0) / (values.get(1) + values.get(0)) * 100))
+    }
+
+    values = obesity['Calories Consumption Monitoring'].value_counts()
+    df_calories_monitoring = {
         '1': round((values.get(1) / (values.get(1) + values.get(0)) * 100)),
         '0': round((values.get(0) / (values.get(1) + values.get(0)) * 100))
     }
 
     plt.figure(
         FigureClass=Waffle,
-        rows=5,
-        values=list(df.values()),
-        icons='child-reaching',
+        rows=10,
+        plots={
+            221: {
+                'values': list(df_calories.values()), # Convert actual number to a reasonable block number
+                'title': {'label': 'Percentage of people consuming' '\n' 'high caloric food', 'loc': 'left', 'fontsize': 10},
+                'legend': {
+                    'labels': list(df_calories.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+            222: {
+                'values': list(df_smoke.values()),
+                'title': {'label': 'Percentage of smokers', 'loc': 'left', 'fontsize': 10},
+                'legend': {
+                    'labels': list(df_smoke.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+            223: {
+                'values': list(df_family.values()),
+                'title': {'label': 'Percentage of people having' '\n' 'family history of overweight', 'loc': 'left', 'fontsize': 10},
+                'legend': {
+                    'labels': list(df_family.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+            224: {
+                'values': list(df_calories_monitoring.values()),
+                'title': {'label': 'Percentage of people monitoring' '\n' 'calories consumption', 'loc': 'left', 'fontsize': 10},
+                'legend': {
+                    'labels': list(df_family.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+        },
+
         icon_legend=True,
-        font_size=25,
-        legend={
-            'labels': list(df.keys()),
-            'loc': 'upper left',
-            'bbox_to_anchor': (1, 1)
-        }
+        font_size=16,
+
     )
-    plt.title(column)
-    plt.savefig('grafici/fig.png',bbox_inches='tight')
+    plt.savefig('grafici/fig.png', bbox_inches='tight')
+    plt.show()
+
+    values = obesity['Alcohol Consumption'].value_counts()
+    df_alcohol = {
+        '0': round((values.get(0) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100))+1,
+        '1': round((values.get(1) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100)),
+        '2': round((values.get(2) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100)),
+        '3': round((values.get(3) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100))
+    }
+
+    values = obesity['Food Consumption Between Meals'].value_counts()
+    df_food_bm = {
+        '0': round((values.get(0) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100)),
+        '1': round((values.get(1) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100)),
+        '2': round((values.get(2) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100)),
+        '3': round((values.get(3) / (values.get(1) + values.get(0) + values.get(2) + values.get(3)) * 100))
+    }
+
+    # create intervals
+    bins = pd.interval_range(0, 3, freq=1)
+    # assign each value in df["column"] to bin and count bin occurences
+    counts = pd.cut(obesity["Vegetables Consumption"], bins).value_counts()
+    # create a Series, indexed by interval midpoints and convert to dictionary
+    values = pd.Series(counts.values, index=bins.mid)
+
+    df_vegetables = {
+        '0-1': round((values.get(0.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+        '1-2': round((values.get(1.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+        '2-3': round((values.get(2.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+    }
+
+
+    values = obesity['Transportation Used'].value_counts()
+    total = values.get('Public_Transportation') + values.get('Walking') + values.get('Motorbike') + values.get('Bike') + values.get('Automobile')
+    df_transportation = {
+        'Public Transportation': round(((values.get('Public_Transportation') / total) * 100))-1,
+        'Walking': round(((values.get('Walking') / total) * 100)),
+        'Motorbike': round(((values.get('Motorbike') / total) * 100)),
+        'Bike': round(((values.get('Bike') / total) * 100))+1,
+        'Automobile': round(((values.get('Automobile') / total) * 100))-1
+    }
+
+    plt.figure(
+        FigureClass=Waffle,
+        rows=10,
+        plots={
+            221: {
+                'values': list(df_alcohol.values()),  # Convert actual number to a reasonable block number
+                'title': {'label': 'Alcol Consumption' '\n' 'alchol', 'loc': 'left',
+                          'fontsize': 10},
+                'legend': {
+                    'labels': list(df_alcohol.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1),
+                    'fontsize': 10
+                },
+                'font_size': 16,
+            },
+            222: {
+                'values': list(df_food_bm.values()),
+                'title': {'label': 'Food consumption between meals', 'loc': 'left', 'fontsize': 10},
+                'legend': {
+                    'labels': list(df_food_bm.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+            223: {
+                'values': list(df_vegetables.values()),
+                'title': {'label': 'Vegetable consumption', 'loc': 'left',
+                          'fontsize': 10},
+                'legend': {
+                    'labels': list(df_vegetables.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+            224: {
+                'values': list(df_transportation.values()),
+                'title': {'label': 'Transportation used', 'loc': 'left',
+                          'fontsize': 10},
+                'legend': {
+                    'labels': list(df_transportation.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+        },
+        icon_legend=True,
+        font_size=16,
+    )
+
+    plt.savefig('grafici/fig2.png', bbox_inches='tight')
+    plt.show()
+
+    values = obesity['Gender'].value_counts()
+    total = values.get('Female') + values.get('Male')
+    df_gender = {
+        'Female': round(((values.get('Female') / total) * 100)),
+        'Male': round(((values.get('Male') / total) * 100)),
+    }
+
+    # create intervals
+    bins = pd.interval_range(0, 4, freq=1)
+    # assign each value in df["column"] to bin and count bin occurences
+    counts = pd.cut(obesity["Main Meals Number"], bins).value_counts()
+    # create a Series, indexed by interval midpoints and convert to dictionary
+    values = pd.Series(counts.values, index=bins.mid)
+
+    df_mainmeals = {
+        '0-1': round((values.get(0.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+        '1-2': round((values.get(1.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+        '2-3': round((values.get(2.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+        '3-4': round((values.get(2.5) / (values.get(0.5) + values.get(1.5) + values.get(2.5)) * 100)),
+    }
+
+    plt.figure(
+        FigureClass=Waffle,
+        rows=10,
+        plots={
+            121: {
+                'values': list(df_gender.values()),  # Convert actual number to a reasonable block number
+                'title': {'label': 'Gender', 'loc': 'left',
+                          'fontsize': 10},
+                'legend': {
+                    'labels': list(df_gender.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1),
+                    'fontsize': 10
+                },
+                'font_size': 16,
+            },
+            122: {
+                'values': list(df_mainmeals.values()),
+                'title': {'label': 'Main meals number', 'loc': 'left', 'fontsize': 10},
+                'legend': {
+                    'labels': list(df_mainmeals.keys()),
+                    'loc': 'upper left',
+                    'bbox_to_anchor': (1, 1)
+                },
+                'font_size': 16,
+            },
+        },
+        icon_legend=True,
+        font_size=16,
+    )
+
+    plt.savefig('grafici/fig3.png', bbox_inches='tight')
     plt.show()
 
 
@@ -285,5 +490,5 @@ weight_hist = histograms('Weight Distribution', 'Weight', obesity_replaced)
 # waffle_chart("High Caloric Food Consumption")
 
 
-distributed_dot_plot(obesity_replaced)
-#waffle_chart("High Caloric Food Consumption")
+#distributed_dot_plot(obesity_replaced)
+waffle_charts()
