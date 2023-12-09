@@ -169,7 +169,7 @@ def strip_plot(df):
     plt.show()
 
 
-def car_plot(df):
+def cat_plot(df):
     df['Nutritional Status'] \
         = df['Nutritional Status'].replace('Insufficient_Weight', 'Insufficient Weight') \
         .replace('Normal_Weight', 'Normal Weight').replace('Overweight_Level_I', 'Overweight Level I') \
@@ -190,7 +190,7 @@ def joint_plot(df):
     colors = sns.color_palette('Paired')[0:7]
     sns.jointplot(data=columns, y="Vegetables Consumption", x="BMI", hue="Nutritional Status", hue_order=order,
                   palette=colors)
-    plt.title('Correlation Between Vegetables Consumption and BMI', loc='center', wrap=True)
+    plt.title('Correlation Between Vegetables Consumption and BMI', loc='center', wrap=True, pad=-20)
     plt.xlabel('Weight')
     plt.ylabel('Vegetables Consumption')
     plt.savefig('grafici/Join Plot.png', bbox_inches='tight')
@@ -223,56 +223,60 @@ def waffle_charts():
     }
 
     plt.figure(
+        figsize=(10, 10),
         FigureClass=Waffle,
         rows=10,
         plots={
             221: {
                 'values': list(df_calories.values()), # Convert actual number to a reasonable block number
-                'title': {'label': 'Percentage of people consuming' '\n' 'high caloric food', 'loc': 'left', 'fontsize': 10},
+                'title': {'label': 'Percentage of people consuming' '\n' 'high caloric food', 'loc': 'left',
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_calories.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
             222: {
                 'values': list(df_smoke.values()),
-                'title': {'label': 'Percentage of smokers', 'loc': 'left', 'fontsize': 10},
+                'title': {'label': 'Percentage of smokers', 'loc': 'left', 'fontsize': 15},
                 'legend': {
                     'labels': list(df_smoke.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
-            },
+                'font_size': 20,
+    },
             223: {
                 'values': list(df_family.values()),
-                'title': {'label': 'Percentage of people having' '\n' 'family history of overweight', 'loc': 'left', 'fontsize': 10},
+                'title': {'label': 'Percentage of people having' '\n' 'family history of overweight', 'loc': 'left',
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_family.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
             224: {
                 'values': list(df_calories_monitoring.values()),
-                'title': {'label': 'Percentage of people monitoring' '\n' 'calories consumption', 'loc': 'left', 'fontsize': 10},
+                'title': {'label': 'Percentage of people monitoring' '\n' 'calories consumption', 'loc': 'left',
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_family.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
         },
 
         icon_legend=True,
-        font_size=16,
-
+        icons='child-reaching',
+        font_size=16
     )
-    plt.savefig('grafici/fig.png', bbox_inches='tight')
+    plt.savefig('grafici/waffle_chart1.png', bbox_inches='tight')
     plt.show()
 
     values = obesity['Alcohol Consumption'].value_counts()
@@ -316,59 +320,61 @@ def waffle_charts():
     }
 
     plt.figure(
+        figsize=(10, 10),
         FigureClass=Waffle,
         rows=10,
         plots={
             221: {
                 'values': list(df_alcohol.values()),  # Convert actual number to a reasonable block number
-                'title': {'label': 'Alcol Consumption' '\n' 'alchol', 'loc': 'left',
-                          'fontsize': 10},
+                'title': {'label': 'Alcohol consumption', 'loc': 'left',
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_alcohol.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1),
                     'fontsize': 10
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
             222: {
                 'values': list(df_food_bm.values()),
-                'title': {'label': 'Food consumption between meals', 'loc': 'left', 'fontsize': 10},
+                'title': {'label': 'Food consumption between meals', 'loc': 'left', 'fontsize': 15},
                 'legend': {
                     'labels': list(df_food_bm.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
             223: {
                 'values': list(df_vegetables.values()),
                 'title': {'label': 'Vegetable consumption', 'loc': 'left',
-                          'fontsize': 10},
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_vegetables.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
             224: {
                 'values': list(df_transportation.values()),
                 'title': {'label': 'Transportation used', 'loc': 'left',
-                          'fontsize': 10},
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_transportation.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
         },
         icon_legend=True,
         font_size=16,
+        icons='child-reaching'
     )
 
-    plt.savefig('grafici/fig2.png', bbox_inches='tight')
+    plt.savefig('grafici/waffle_chart2.png', bbox_inches='tight')
     plt.show()
 
     values = obesity['Gender'].value_counts()
@@ -393,37 +399,39 @@ def waffle_charts():
     }
 
     plt.figure(
+        figsize=(10, 10),
         FigureClass=Waffle,
         rows=10,
         plots={
             121: {
                 'values': list(df_gender.values()),  # Convert actual number to a reasonable block number
                 'title': {'label': 'Gender', 'loc': 'left',
-                          'fontsize': 10},
+                          'fontsize': 15},
                 'legend': {
                     'labels': list(df_gender.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1),
-                    'fontsize': 10
+                    'fontsize': 15
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
             122: {
                 'values': list(df_mainmeals.values()),
-                'title': {'label': 'Main meals number', 'loc': 'left', 'fontsize': 10},
+                'title': {'label': 'Main meals number', 'loc': 'left', 'fontsize': 15},
                 'legend': {
                     'labels': list(df_mainmeals.keys()),
                     'loc': 'upper left',
                     'bbox_to_anchor': (1, 1)
                 },
-                'font_size': 16,
+                'font_size': 20,
             },
         },
         icon_legend=True,
         font_size=16,
+        icons='child-reaching'
     )
 
-    plt.savefig('grafici/fig3.png', bbox_inches='tight')
+    plt.savefig('grafici/waffle_chart3.png', bbox_inches='tight')
     plt.show()
 
 
@@ -493,7 +501,7 @@ def histograms():
     plt.show()
 
 
-histograms()
+#histograms()
 # weight_height()
 # BMI()
 # violin_chart()
@@ -501,11 +509,11 @@ histograms()
 # plot_correlation_matrix(obesity_no_index)
 # strip_plot(obesity)
 # plot_scatterplot()
-# car_plot(obesity_replaced)
-# joint_plot(obesity_replaced)
+# cat_plot(obesity_replaced)
+#joint_plot(obesity_replaced)
 # waffle_chart("High Caloric Food Consumption")
 
 # waffle_chart("High Caloric Food Consumption")
 
 #distributed_dot_plot(obesity_replaced)
-waffle_charts()
+#waffle_charts()
