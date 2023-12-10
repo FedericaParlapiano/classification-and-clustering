@@ -14,11 +14,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 
+
 def silhouette_analysis(range_n_clusters, X):
     for n_clusters in range_n_clusters:
         # Create a subplot with 1 row and 2 columns
         fig, (ax1, ax2) = plt.subplots(1, 2)
-        fig.set_size_inches(18, 7)
+        fig.set_size_inches(12, 6)
 
         # The 1st subplot is the silhouette plot
         # The silhouette coefficient can range from -1, 1 but in this example all
@@ -87,15 +88,15 @@ def silhouette_analysis(range_n_clusters, X):
         # 2nd Plot showing the actual clusters formed
         colors = cm.nipy_spectral(cluster_labels.astype(float) / n_clusters)
         ax2.scatter(
-            X[:, 2], X[:, 3], marker=".", s=30, lw=0, alpha=0.7, c=colors, edgecolor="k"
+            X[:, 0], X[:, 1], marker=".", s=30, lw=0, alpha=0.7, c=colors, edgecolor="k"
         )
 
         # Labeling the clusters
         centers = clusterer.cluster_centers_
         # Draw white circles at cluster centers
         ax2.scatter(
-            centers[:, 2],
-            centers[:, 3],
+            centers[:, 0],
+            centers[:, 1],
             marker="o",
             c="white",
             alpha=1,
@@ -104,7 +105,7 @@ def silhouette_analysis(range_n_clusters, X):
         )
 
         for i, c in enumerate(centers):
-            ax2.scatter(c[2], c[3], marker="$%d$" % i, alpha=1, s=50, edgecolor="k")
+            ax2.scatter(c[0], c[1], marker="$%d$" % i, alpha=1, s=50, edgecolor="k")
 
         ax2.set_title("The visualization of the clustered data.")
         ax2.set_xlabel("Feature space for the 1st feature")
@@ -117,7 +118,9 @@ def silhouette_analysis(range_n_clusters, X):
             fontweight="bold",
         )
 
-    plt.show()
+    plt.savefig('grafici/silhouette', bbox_inches='tight')
+
+
 
 def elbow_method(X):
     # Instantiate the clustering model and visualizer
@@ -178,16 +181,11 @@ def bench_k_means(kmeans, name, data, labels):
 
 
 data = pd.read_csv("..\data\obesity_dataset_clean.csv")
-# (n_samples, n_features), n_digits = data.shape, 7
-(n_samples, n_features), n_digits = data.shape, 4
+(n_samples, n_features), n_digits = data.shape, 7
 
 print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
 
 data = data.iloc[:, 1:]
-
-data['Nutritional Status'] = data['Nutritional Status'].replace('Overweight_Level_I', 'Overweight') \
-    .replace('Overweight_Level_II', 'Overweight').replace('Obesity_Type_I', 'Obesity') \
-    .replace('Obesity_Type_II', 'Obesity').replace('Obesity_Type_III', 'Obesity')
 
 labels = data["Nutritional Status"].values
 
@@ -195,19 +193,24 @@ data = data.drop("Nutritional Status", axis=1)
 
 number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
-data["Transportation Used"] = number.fit_transform(data["Transportation Used"].astype('str'))
+data['Transportation Used'] = number.fit_transform(data['Transportation Used'])
 
-silhouette_analysis([2, 3, 4, 5, 6], data.values)
-elbow_method(data.values)
+pca = PCA(n_components=2)
+pca_x = pca.fit_transform(data)
+data_reduced = pd.DataFrame(pca_x).values
 
-'''print(80 * "_")
+elbow_method(data_reduced)
+
+silhouette_analysis([7], data_reduced)
+
+print(80 * "_")
 print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI   \tAMI   \tsilhouette")
 
-kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init=4, random_state=0)
-bench_k_means(kmeans=kmeans, name="k-means++", data=data, labels=labels)
+kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init=10, random_state=0)
+bench_k_means(kmeans=kmeans, name="k-means++", data=data_reduced, labels=labels)
 
-kmeans = KMeans(init="random", n_clusters=n_digits, n_init=4, random_state=0)
-bench_k_means(kmeans=kmeans, name="random", data=data, labels=labels)
+kmeans = KMeans(init="random", n_clusters=n_digits, n_init=10, random_state=0)
+bench_k_means(kmeans=kmeans, name="random", data=data_reduced, labels=labels)
 
 pca = PCA(n_components=n_digits).fit(data)
 kmeans = KMeans(init=pca.components_, n_clusters=n_digits, n_init=1)
@@ -215,16 +218,15 @@ bench_k_means(kmeans=kmeans, name="PCA-based", data=data, labels=labels)
 
 print(80 * "_")
 
-reduced_data = PCA(n_components=2).fit_transform(data)
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto')
-kmeans.fit(reduced_data)
+kmeans.fit(data_reduced)
 
 # Step size of the mesh. Decrease to increase the quality of the VQ.
 h = 0.02  # point in the mesh [x_min, x_max]x[y_min, y_max].
 
 # Plot the decision boundary. For that, we will assign a color to each
-x_min, x_max = reduced_data[:, 0].min() - 1, reduced_data[:, 0].max() + 1
-y_min, y_max = reduced_data[:, 1].min() - 1, reduced_data[:, 1].max() + 1
+x_min, x_max = data_reduced[:, 0].min() - 1, data_reduced[:, 0].max() + 1
+y_min, y_max = data_reduced[:, 1].min() - 1, data_reduced[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
 # Obtain labels for each point in mesh. Use last trained model.
@@ -243,7 +245,7 @@ plt.imshow(
     origin="lower",
 )
 
-plt.plot(reduced_data[:, 0], reduced_data[:, 1], "k.", markersize=2)
+plt.plot(data_reduced[:, 0], data_reduced[:, 1], "k.", markersize=2)
 # Plot the centroids as a white X
 centroids = kmeans.cluster_centers_
 plt.scatter(
@@ -255,12 +257,10 @@ plt.scatter(
     color="w",
     zorder=10,
 )
-plt.title("K-means clustering on the digits dataset (PCA-reduced data)\n")
+plt.title("K-means clustering")
 plt.xlim(x_min, x_max)
 plt.ylim(y_min, y_max)
 plt.xticks(())
 plt.yticks(())
-plt.show()'''
-
-
-
+plt.show()
+plt.savefig('grafici/kmean', bbox_inches='tight')
