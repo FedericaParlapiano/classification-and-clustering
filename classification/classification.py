@@ -4,7 +4,8 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
@@ -34,6 +35,17 @@ Y = obesity['Nutritional Status']
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.15, random_state=13)
 
 scaler = preprocessing.StandardScaler().fit(X_train)
+
+# Decision Tree Classifier
+decision_tree = DecisionTreeClassifier(random_state=42)
+scores_dt = cross_val_score(decision_tree, X_train, y_train, cv=5)
+print(f'Decision Tree Classifier - Cross-Validated Accuracy: {scores_dt.mean()}')
+
+decision_tree.fit(X_train, y_train)
+y_pred_dt = decision_tree.predict(X_test)
+print(f'Decision Tree Classifier - Test Accuracy: {accuracy_score(y_test, y_pred_dt)}')
+print(f'Decision Tree Classifier - Classification Report:\n{classification_report(y_test, y_pred_dt)}')
+print (f'Confusion Matrix: \n{confusion_matrix(y_test, y_pred_dt)}')
 
 # Random Forest Classifier
 RForest = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -95,9 +107,15 @@ y_pred_ab = adaboost.predict(X_test)
 print(f'AdaBoost Classifier - Test Accuracy: {accuracy_score(y_test, y_pred_ab)}')
 print(f'AdaBoost Classifier - Classification Report:\n{classification_report(y_test, y_pred_ab)}')
 
-# Decision Tree Classifier
 # Gradient Boosting Classifier
-# Linear Discriminant Analysis
+gradient_boost = GradientBoostingClassifier(random_state=42)
+scores_gb = cross_val_score(gradient_boost, X_train, y_train, cv=5)
+print(f'Gradient Boosting - Cross-Validated Accuracy: {scores_gb.mean()}')
+
+gradient_boost.fit(X_train, y_train)
+y_pred_gb = gradient_boost.predict(X_test)
+print(f'Gradient Boosting - Test Accuracy: {accuracy_score(y_test, y_pred_gb)}')
+print(f'Gradient Boosting - Classification Report:\n{classification_report(y_test, y_pred_gb)}')
 
 # Confusion Matrix Plot
 conf_matrix_rf = confusion_matrix(y_test, y_pred_rf)
