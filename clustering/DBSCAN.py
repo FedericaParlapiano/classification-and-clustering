@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -48,8 +47,13 @@ number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
 data["Transportation Used"] = number.fit_transform(data["Transportation Used"].astype('str'))
 
+scaler = StandardScaler()
+scaled_array = scaler.fit_transform(data)
+data_scaled = pd.DataFrame(scaled_array, columns=data.columns)
+
 pca = PCA(n_components=2)
-data_reduced = pd.DataFrame(pca.fit_transform(data))
+pca_x = pca.fit_transform(data_scaled)
+data_reduced = pd.DataFrame(pca_x)
 
 n = 10
 neighbors = NearestNeighbors(n_neighbors=n)
@@ -65,7 +69,7 @@ kl.plot_knee()
 x = kl.elbow
 eps = kl.knee_y
 
-eps_to_test = [round(eps, 2) for eps in np.arange((eps - 0.1), eps + 0.1, 0.02)]
+eps_to_test = [round(eps, 2) for eps in np.arange((eps - 0.05), eps + 0.05, 0.01)]
 min_samples_to_test = range(5, 30, 3)
 print(eps_to_test)
 
@@ -98,7 +102,7 @@ for eps in eps_to_test:
         results_noise.loc[eps, min_samples] = noise_metric
         results_clusters.loc[eps, min_samples] = cluster_metric
 
-ig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16,8) )
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16,8) )
 
 sns.heatmap(results_noise, annot = True, ax = ax1, cbar = False).set_title("METRIC: Mean Noise Points Distance")
 sns.heatmap(results_clusters, annot = True, ax = ax2, cbar = False).set_title("METRIC: Number of clusters")
@@ -106,4 +110,27 @@ sns.heatmap(results_clusters, annot = True, ax = ax2, cbar = False).set_title("M
 ax1.set_xlabel("N"); ax2.set_xlabel("N")
 ax1.set_ylabel("EPSILON"); ax2.set_ylabel("EPSILON")
 
-plt.tight_layout(); plt.show()
+plt.tight_layout()
+plt.show()
+
+db = DBSCAN(eps=0.3, min_samples=5).fit(data_reduced)
+
+ymeans = db.labels_
+
+plt.figure(figsize=(15,8))
+plt.title('Cluster of PCAs', fontsize = 30)
+
+plt.scatter(pca_x[ymeans == -1, 0], pca_x[ymeans == -1, 1], s = 100, c = 'black')
+plt.scatter(pca_x[ymeans == 0, 0], pca_x[ymeans == 0, 1], s = 100, c = 'pink')
+plt.scatter(pca_x[ymeans == 1, 0], pca_x[ymeans == 1, 1], s = 100, c = 'orange')
+plt.scatter(pca_x[ymeans == 2, 0], pca_x[ymeans == 2, 1], s = 100, c = 'lightgreen')
+plt.scatter(pca_x[ymeans == 3, 0], pca_x[ymeans == 3, 1], s = 100, c = 'blue')
+plt.scatter(pca_x[ymeans == 4, 0], pca_x[ymeans == 4, 1], s = 100, c = 'gray')
+plt.scatter(pca_x[ymeans == 5, 0], pca_x[ymeans == 5, 1], s = 100, c = 'red')
+
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+plt.legend()
+plt.show()
+
+
