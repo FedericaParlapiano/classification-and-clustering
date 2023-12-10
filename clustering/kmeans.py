@@ -10,6 +10,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 
+
 def bench_k_means(kmeans, name, data, labels):
     """Benchmark to evaluate the KMeans initialization methods.
 
@@ -28,7 +29,7 @@ def bench_k_means(kmeans, name, data, labels):
         supervision.
     """
     t0 = time()
-    estimator = make_pipeline(StandardScaler(), kmeans).fit(data)
+    estimator = make_pipeline(None, kmeans).fit(data)
     fit_time = time() - t0
     results = [name, fit_time, estimator[-1].inertia_]
 
@@ -49,7 +50,6 @@ def bench_k_means(kmeans, name, data, labels):
             data,
             estimator[-1].labels_,
             metric="euclidean",
-            sample_size=800,
         )
     ]
 
@@ -59,24 +59,29 @@ def bench_k_means(kmeans, name, data, labels):
     )
     print(formatter_result.format(*results))
 
-data = pd.read_csv("C:\\Users\\feder\\PycharmProjects\\classification-and-clustering\\data\\obesity_dataset_clean.csv")
-(n_samples, n_features), n_digits = data.shape, 7
+
+data = pd.read_csv("..\data\obesity_dataset_clean.csv")
+# (n_samples, n_features), n_digits = data.shape, 7
+(n_samples, n_features), n_digits = data.shape, 4
 
 print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
 
-data = data.iloc[:800, 1:]
+data = data.iloc[:, 1:]
+
+data['Nutritional Status'] = data['Nutritional Status'].replace('Overweight_Level_I', 'Overweight') \
+    .replace('Overweight_Level_II', 'Overweight').replace('Obesity_Type_I', 'Obesity') \
+    .replace('Obesity_Type_II', 'Obesity').replace('Obesity_Type_III', 'Obesity')
 
 labels = data["Nutritional Status"].values
 
 data = data.drop("Nutritional Status", axis=1)
 
-
 number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
 data["Transportation Used"] = number.fit_transform(data["Transportation Used"].astype('str'))
 
-print(82 * "_")
-print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI\tAMI\tsilhouette")
+print(80 * "_")
+print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI   \tAMI   \tsilhouette")
 
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init=4, random_state=0)
 bench_k_means(kmeans=kmeans, name="k-means++", data=data, labels=labels)
@@ -88,20 +93,7 @@ pca = PCA(n_components=n_digits).fit(data)
 kmeans = KMeans(init=pca.components_, n_clusters=n_digits, n_init=1)
 bench_k_means(kmeans=kmeans, name="PCA-based", data=data, labels=labels)
 
-print(82 * "_")
-
-'''data = pd.read_csv("C:\\Users\\feder\\PycharmProjects\\classification-and-clustering\\data\\obesity_dataset_clean.csv")
-(n_samples, n_features), n_digits = data.shape, 7
-
-print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
-
-data = data.drop("Nutritional Status", axis=1)
-
-data = data.iloc[:800, 1:]
-
-number = LabelEncoder()
-data['Gender'] = number.fit_transform(data['Gender'])
-data["Transportation Used"] = number.fit_transform(data["Transportation Used"].astype('str'))
+print(80 * "_")
 
 reduced_data = PCA(n_components=2).fit_transform(data)
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto')
@@ -143,12 +135,9 @@ plt.scatter(
     color="w",
     zorder=10,
 )
-plt.title(
-    "K-means clustering on the digits dataset (PCA-reduced data)\n"
-    "Centroids are marked with white cross"
-)
+plt.title("K-means clustering on the digits dataset (PCA-reduced data)\n")
 plt.xlim(x_min, x_max)
 plt.ylim(y_min, y_max)
 plt.xticks(())
 plt.yticks(())
-plt.show()'''
+plt.show()
