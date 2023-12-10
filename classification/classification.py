@@ -85,10 +85,10 @@ def SVC_gs():
                   'kernel': ['rbf', 'linear', 'poly']}
     grid_svc = GridSearchCV(SVC(), param_grid_svc, refit=True, verbose=3)
     grid_svc.fit(X_train, y_train)
-    best_params_svc = grid_svc.best_params_
+    best_params_svc = str(grid_svc.best_params_)
     y_pred_grid_svc = grid_svc.predict(X_test)
     save_confusion_matrix(y_test, y_pred_grid_svc, 'SVC_gs.png', 'Support Vector Machine Classifier with GridSearch')
-    return y_pred_grid_svc
+    return y_pred_grid_svc, best_params_svc
 
 def logistic_regression():
     # Logistic Regression Classifier
@@ -126,7 +126,7 @@ def GradientBoosting():
 y_pred_dt = decision_tree()
 y_pred_rf = random_forest()
 y_pred_svc = SVC_nogs()
-y_pred_grid_svc = SVC_gs()
+y_pred_grid_svc, optimal_svc = SVC_gs()
 y_pred_lr = logistic_regression()
 y_pred_xgb = XGboost()
 y_pred_ab = AdaBoost()
@@ -155,3 +155,6 @@ with open(output_file_path, 'w') as f:
     f.write(f'XGBoost Classifier:\n{classification_report(y_test, y_pred_xgb)}\n')
     f.write(f'AdaBoost Classifier:\n{classification_report(y_test, y_pred_ab)}\n')
     f.write(f'Gradient Boosting Classifier:\n{classification_report(y_test, y_pred_gb)}')
+
+    f.write('\n<------------------------------ Optimal Parameters for Grid Search ------------------------------->\n\n')
+    f.write(f'Support Vector Machine Classifier with GridSearch: {optimal_svc}\n')
