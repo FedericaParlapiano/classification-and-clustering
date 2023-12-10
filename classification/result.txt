@@ -1,0 +1,117 @@
+
+<------------------------------------- Test Accuracy ------------------------------------->
+
+Decision Tree Classifier: 0.9078014184397163
+Random Forest Classifier: 0.9432624113475178
+Support Vector Machine Classifier: 0.6477541371158393
+Logistic Regression: 0.6359338061465721
+XGBoost Classifier: 0.9598108747044918
+AdaBoost Classifier: 0.27423167848699764
+Gradient Boosting Classifier: 0.9479905437352246
+
+<------------------------------------- Classification Report ------------------------------------->
+
+Decision Tree Classifier:
+              precision    recall  f1-score   support
+
+           0       0.91      0.96      0.94        54
+           1       0.84      0.74      0.79        58
+           2       0.92      0.96      0.94        70
+           3       0.98      0.97      0.97        60
+           4       0.98      0.98      0.98        65
+           5       0.77      0.86      0.81        58
+           6       0.94      0.86      0.90        58
+
+    accuracy                           0.91       423
+   macro avg       0.91      0.91      0.91       423
+weighted avg       0.91      0.91      0.91       423
+
+Random Forest Classifier:
+              precision    recall  f1-score   support
+
+           0       0.98      0.94      0.96        54
+           1       0.82      0.88      0.85        58
+           2       0.99      0.99      0.99        70
+           3       0.98      0.98      0.98        60
+           4       0.98      0.98      0.98        65
+           5       0.90      0.91      0.91        58
+           6       0.95      0.90      0.92        58
+
+    accuracy                           0.94       423
+   macro avg       0.94      0.94      0.94       423
+weighted avg       0.94      0.94      0.94       423
+
+Support Vector Machine Classifier:
+              precision    recall  f1-score   support
+
+           0       0.78      0.78      0.78        54
+           1       0.61      0.57      0.59        58
+           2       0.51      0.43      0.47        70
+           3       0.92      0.58      0.71        60
+           4       0.73      0.97      0.83        65
+           5       0.66      0.66      0.66        58
+           6       0.45      0.57      0.50        58
+
+    accuracy                           0.65       423
+   macro avg       0.66      0.65      0.65       423
+weighted avg       0.66      0.65      0.64       423
+
+Logistic Regression:
+              precision    recall  f1-score   support
+
+           0       0.76      0.70      0.73        54
+           1       0.53      0.59      0.56        58
+           2       0.55      0.37      0.44        70
+           3       0.74      0.80      0.77        60
+           4       0.75      0.97      0.85        65
+           5       0.65      0.62      0.64        58
+           6       0.41      0.41      0.41        58
+
+    accuracy                           0.64       423
+   macro avg       0.63      0.64      0.63       423
+weighted avg       0.63      0.64      0.63       423
+
+XGBoost Classifier:
+              precision    recall  f1-score   support
+
+           0       1.00      0.96      0.98        54
+           1       0.93      0.93      0.93        58
+           2       0.97      0.99      0.98        70
+           3       0.97      0.98      0.98        60
+           4       0.98      0.98      0.98        65
+           5       0.89      0.95      0.92        58
+           6       0.98      0.91      0.95        58
+
+    accuracy                           0.96       423
+   macro avg       0.96      0.96      0.96       423
+weighted avg       0.96      0.96      0.96       423
+
+AdaBoost Classifier:
+              precision    recall  f1-score   support
+
+           0       1.00      0.07      0.14        54
+           1       0.34      0.45      0.39        58
+           2       0.19      0.41      0.26        70
+           3       0.00      0.00      0.00        60
+           4       0.00      0.00      0.00        65
+           5       0.31      0.98      0.47        58
+           6       0.00      0.00      0.00        58
+
+    accuracy                           0.27       423
+   macro avg       0.26      0.27      0.18       423
+weighted avg       0.25      0.27      0.18       423
+
+Gradient Boosting Classifier:
+              precision    recall  f1-score   support
+
+           0       0.98      0.94      0.96        54
+           1       0.91      0.90      0.90        58
+           2       0.96      0.99      0.97        70
+           3       0.97      0.98      0.98        60
+           4       1.00      0.98      0.99        65
+           5       0.86      0.93      0.89        58
+           6       0.96      0.90      0.93        58
+
+    accuracy                           0.95       423
+   macro avg       0.95      0.95      0.95       423
+weighted avg       0.95      0.95      0.95       423
