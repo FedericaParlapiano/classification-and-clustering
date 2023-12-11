@@ -12,7 +12,6 @@ from sklearn.pipeline import make_pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 
-
 def silhouette_analysis(range_n_clusters, X):
     for n_clusters in range_n_clusters:
         # Create a subplot with 1 row and 2 columns
@@ -29,7 +28,7 @@ def silhouette_analysis(range_n_clusters, X):
 
         # Initialize the clusterer with n_clusters value and a random generator
         # seed of 10 for reproducibility.
-        clusterer = KMeans(n_clusters=n_clusters, n_init="auto", random_state=10)
+        clusterer = KMeans(n_clusters=n_clusters, n_init="auto", random_state=0)
         cluster_labels = clusterer.fit_predict(X)
 
         # The silhouette_score gives the average value for all the samples.
@@ -117,18 +116,23 @@ def silhouette_analysis(range_n_clusters, X):
         )
 
     plt.savefig('grafici/silhouette', bbox_inches='tight')
+    plt.show()
 
 
 def elbow_method(X):
     # Instantiate the clustering model and visualizer
     model = KMeans()
-    visualizer = KElbowVisualizer(model, k=(3, 10))
-    visualizer = KElbowVisualizer(model, k=(2, 10), metric='calinski_harabasz')
-    visualizer = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
-
+    visualizer = KElbowVisualizer(model, k=(2, 10))
     visualizer.fit(X)
     visualizer.show()
 
+    visualizer = KElbowVisualizer(model, k=(2, 10), metric='calinski_harabasz')
+    visualizer.fit(X)
+    visualizer.show()
+
+    visualizer = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
+    visualizer.fit(X)
+    visualizer.show()
 
 def bench_k_means(kmeans, name, data, labels):
     """Benchmark to evaluate the KMeans initialization methods.
@@ -179,7 +183,7 @@ def bench_k_means(kmeans, name, data, labels):
     print(formatter_result.format(*results))
 
 
-data = pd.read_csv("..\data\obesity_dataset_clean.csv")
+data = pd.read_csv("..\\data\\obesity_dataset_clean.csv")
 (n_samples, n_features), n_digits = data.shape, 3
 
 print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
@@ -196,8 +200,6 @@ data['Transportation Used'] = number.fit_transform(data['Transportation Used'])
 
 elbow_method(data.values)
 
-# silhouette_analysis([7], data.values)
-
 print(80 * "_")
 print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI   \tAMI   \tsilhouette")
 
@@ -207,28 +209,31 @@ bench_k_means(kmeans=kmeans, name="k-means++", data=data, labels=labels)
 kmeans = KMeans(init="random", n_clusters=n_digits, n_init=10, random_state=0)
 bench_k_means(kmeans=kmeans, name="random", data=data, labels=labels)
 
-d = data.copy()
-d2 = data.copy()
+d_pca1 = data.copy()
+d_pca2 = data.copy()
+d_pca3 = data.copy()
+d_pca4 = data.copy()
+pc = 2
 
-pca = PCA(n_components=4).fit(data)
-kmeans = KMeans(init=pca.components_, n_clusters=n_digits, n_init=1, random_state=0)
-bench_k_means(kmeans=kmeans, name="PCA-based", data=data, labels=labels)
+pca = PCA(n_components=pc).fit_transform(d_pca1)
+kmeans = KMeans(init='k-means++', n_clusters=n_digits, n_init=1, random_state=0)
+bench_k_means(kmeans=kmeans, name="PCA2-based", data=pca, labels=labels)
 
-pca = PCA(n_components=2).fit_transform(d)
+pca = PCA(n_components=3).fit_transform(d_pca2)
 kmeans = KMeans(init='k-means++', n_clusters=n_digits, n_init='auto', random_state=0)
-bench_k_means(kmeans=kmeans, name="PCA-based", data=pca, labels=labels)
+bench_k_means(kmeans=kmeans, name="PCA3-based", data=pca, labels=labels)
 
-pca = PCA(n_components=2)
-pca_x = pca.fit_transform(d2)
+pca = PCA(n_components=8)
+pca_x = pca.fit_transform(d_pca3)
 data_reduced = pd.DataFrame(pca_x).values
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto', random_state=0)
-bench_k_means(kmeans=kmeans, name="PCA-based", data=pca_x, labels=labels)
+bench_k_means(kmeans=kmeans, name="PCA8-based", data=pca_x, labels=labels)
 kmeans.fit(data_reduced)
 
 print(80 * "_")
-'''
-pca = PCA(n_components=2)
-pca_x = pca.fit_transform(data)
+
+pca = PCA(n_components=pc)
+pca_x = pca.fit_transform(d_pca4)
 data_reduced = pd.DataFrame(pca_x).values
 
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto')
@@ -277,4 +282,6 @@ plt.xticks(())
 plt.yticks(())
 plt.show()
 plt.savefig('grafici/kmean', bbox_inches='tight')
-'''
+
+silhouette_analysis([3], data_reduced)
+

@@ -3,6 +3,7 @@ import pandas as pd
 
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn import metrics
 from sklearn.decomposition import PCA
 
 from sklearn.preprocessing import StandardScaler, LabelEncoder
@@ -10,6 +11,8 @@ from sklearn.cluster import DBSCAN
 
 from sklearn.neighbors import NearestNeighbors
 from kneed import KneeLocator
+from cdbw import CDbw
+#from DBCV import DBCV
 
 
 def get_metrics(eps, min_samples, dataset, iter_):
@@ -51,11 +54,16 @@ scaler = StandardScaler()
 scaled_array = scaler.fit_transform(data)
 data_scaled = pd.DataFrame(scaled_array, columns=data.columns)
 
+data_copy = data.copy()
 pca = PCA(n_components=2)
-pca_x = pca.fit_transform(data_scaled)
+pca_x = pca.fit_transform(data_copy)
 data_reduced = pd.DataFrame(pca_x)
 
-n = 10
+#data_reduced = data_scaled
+
+n = 5 # con scaling
+#n = 10 # senza scaling e senza PCA
+#n = 10 # con scaling e con PCA, solo PCA
 neighbors = NearestNeighbors(n_neighbors=n)
 neighbors_fit = neighbors.fit(data_reduced)
 distances, indices = neighbors_fit.kneighbors(data_reduced)
@@ -69,8 +77,10 @@ kl.plot_knee()
 x = kl.elbow
 eps = kl.knee_y
 
-eps_to_test = [round(eps, 2) for eps in np.arange((eps - 0.05), eps + 0.05, 0.01)]
-min_samples_to_test = range(5, 30, 3)
+print("eps=" + str(eps))
+
+eps_to_test = [round(eps, 2) for eps in np.arange((eps - 0.5), eps + 0.5, 0.1)]
+min_samples_to_test = range(10, 30, 2)
 print(eps_to_test)
 
 results_noise = pd.DataFrame(
@@ -113,11 +123,30 @@ ax1.set_ylabel("EPSILON"); ax2.set_ylabel("EPSILON")
 plt.tight_layout()
 plt.show()
 
-db = DBSCAN(eps=0.3, min_samples=5).fit(data_reduced)
+db = DBSCAN(eps=5.3, min_samples=10).fit(data_reduced)
 
 ymeans = db.labels_
 
-plt.figure(figsize=(15,8))
+# Number of clusters in labels, ignoring noise if present.
+n_clusters_ = len(set(ymeans)) - (1 if -1 in ymeans else 0)
+n_noise_ = list(ymeans).count(-1)
+
+print(f"Homogeneity: {metrics.homogeneity_score(ymeans, labels):.3f}")
+print(f"Completeness: {metrics.completeness_score(ymeans, labels):.3f}")
+print(f"V-measure: {metrics.v_measure_score(ymeans, labels):.3f}")
+print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(ymeans, labels):.3f}")
+print(
+    "Adjusted Mutual Information:"
+    f" {metrics.adjusted_mutual_info_score(ymeans, labels):.3f}"
+)
+print(f"Silhouette Coefficient: {metrics.silhouette_score(data_reduced, ymeans):.3f}")
+
+print("Estimated number of clusters: %d" % n_clusters_)
+print("Estimated number of noise points: %d" % n_noise_)
+
+print(CDbw(data_reduced.values, ymeans, metric="euclidean"))
+
+'''plt.figure(figsize=(15,8))
 plt.title('Cluster of PCAs', fontsize = 30)
 
 plt.scatter(pca_x[ymeans == -1, 0], pca_x[ymeans == -1, 1], s = 100, c = 'black')
@@ -131,6 +160,6 @@ plt.scatter(pca_x[ymeans == 5, 0], pca_x[ymeans == 5, 1], s = 100, c = 'red')
 plt.xlabel('PCA1')
 plt.ylabel('PCA2')
 plt.legend()
-plt.show()
+plt.show()'''
 
 
