@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from sklearn.datasets import make_blobs
 from yellowbrick.cluster import KElbowVisualizer
 from matplotlib import cm
 from sklearn.cluster import KMeans
@@ -10,7 +9,6 @@ from time import time
 from sklearn import metrics
 from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
 
@@ -121,11 +119,12 @@ def silhouette_analysis(range_n_clusters, X):
     plt.savefig('grafici/silhouette', bbox_inches='tight')
 
 
-
 def elbow_method(X):
     # Instantiate the clustering model and visualizer
     model = KMeans()
-    visualizer = KElbowVisualizer(model, k=(4, 12))
+    visualizer = KElbowVisualizer(model, k=(3, 10))
+    visualizer = KElbowVisualizer(model, k=(2, 10), metric='calinski_harabasz')
+    visualizer = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
 
     visualizer.fit(X)
     visualizer.show()
@@ -181,7 +180,7 @@ def bench_k_means(kmeans, name, data, labels):
 
 
 data = pd.read_csv("..\data\obesity_dataset_clean.csv")
-(n_samples, n_features), n_digits = data.shape, 7
+(n_samples, n_features), n_digits = data.shape, 3
 
 print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
 
@@ -195,28 +194,42 @@ number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
 data['Transportation Used'] = number.fit_transform(data['Transportation Used'])
 
-pca = PCA(n_components=2)
-pca_x = pca.fit_transform(data)
-data_reduced = pd.DataFrame(pca_x).values
+elbow_method(data.values)
 
-elbow_method(data_reduced)
-
-silhouette_analysis([7], data_reduced)
+# silhouette_analysis([7], data.values)
 
 print(80 * "_")
 print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI   \tAMI   \tsilhouette")
 
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init=10, random_state=0)
-bench_k_means(kmeans=kmeans, name="k-means++", data=data_reduced, labels=labels)
+bench_k_means(kmeans=kmeans, name="k-means++", data=data, labels=labels)
 
 kmeans = KMeans(init="random", n_clusters=n_digits, n_init=10, random_state=0)
-bench_k_means(kmeans=kmeans, name="random", data=data_reduced, labels=labels)
+bench_k_means(kmeans=kmeans, name="random", data=data, labels=labels)
 
-pca = PCA(n_components=n_digits).fit(data)
-kmeans = KMeans(init=pca.components_, n_clusters=n_digits, n_init=1)
+d = data.copy()
+d2 = data.copy()
+
+pca = PCA(n_components=4).fit(data)
+kmeans = KMeans(init=pca.components_, n_clusters=n_digits, n_init=1, random_state=0)
 bench_k_means(kmeans=kmeans, name="PCA-based", data=data, labels=labels)
 
+pca = PCA(n_components=2).fit_transform(d)
+kmeans = KMeans(init='k-means++', n_clusters=n_digits, n_init='auto', random_state=0)
+bench_k_means(kmeans=kmeans, name="PCA-based", data=pca, labels=labels)
+
+pca = PCA(n_components=2)
+pca_x = pca.fit_transform(d2)
+data_reduced = pd.DataFrame(pca_x).values
+kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto', random_state=0)
+bench_k_means(kmeans=kmeans, name="PCA-based", data=pca_x, labels=labels)
+kmeans.fit(data_reduced)
+
 print(80 * "_")
+'''
+pca = PCA(n_components=2)
+pca_x = pca.fit_transform(data)
+data_reduced = pd.DataFrame(pca_x).values
 
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto')
 kmeans.fit(data_reduced)
@@ -264,3 +277,4 @@ plt.xticks(())
 plt.yticks(())
 plt.show()
 plt.savefig('grafici/kmean', bbox_inches='tight')
+'''
