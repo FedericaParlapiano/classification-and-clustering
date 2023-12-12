@@ -10,7 +10,7 @@ from sklearn.neighbors import NearestNeighbors
 from kneed import KneeLocator
 
 
-def elbow_method(dataset, n_knn):
+def elbow_method(dataset, n_knn, config):
     neighbors = NearestNeighbors(n_neighbors=n_knn)
     neighbors_fit = neighbors.fit(dataset)
     distances, indices = neighbors_fit.kneighbors(dataset)
@@ -19,15 +19,15 @@ def elbow_method(dataset, n_knn):
 
     kl = KneeLocator(range(1, len(distances) + 1), distances, curve="convex")
     kl.plot_knee(figsize=(9, 6))
-    plt.savefig('grafici/elbow_dbscan', bbox_inches='tight')
+    plt.savefig(f"grafici/elbow dbscan {config}", bbox_inches='tight')
     plt.show()
 
     return kl.elbow, kl.knee_y
 
 
-def select_parameter(eps, dataset):
-    eps_to_test = [round(e, 2) for e in np.arange((eps - 0.05), eps + 0.05, 0.01)]
-    min_samples_to_test = range(5, 15, 1)
+def select_parameter(eps, dataset, config):
+    eps_to_test = [round(e, 3) for e in np.arange((eps - 0.1), eps + 0.1, 0.01)]
+    min_samples_to_test = range(5, 30, 5)
 
     results_noise = pd.DataFrame(
         data=np.zeros((len(eps_to_test), len(min_samples_to_test))),  # Empty dataframe
@@ -69,7 +69,7 @@ def select_parameter(eps, dataset):
     ax2.set_ylabel("EPSILON")
 
     plt.tight_layout()
-    plt.savefig('grafici/parametri dbscan', bbox_inches='tight')
+    plt.savefig(f"grafici/parametri dbscan {config}", bbox_inches='tight')
     plt.show()
 
 
@@ -99,29 +99,39 @@ def get_metrics(eps, min_samples, dataset, iter_):
 
 
 file = '../data/obesity_dataset_clean.csv'
-data = pd.read_csv(file)
-data = data.iloc[:, 1:]
-labels = data["Nutritional Status"].values
-data = data.drop("Nutritional Status", axis=1)
+obesity = pd.read_csv(file)
+obesity = obesity.iloc[:, 1:]
+labels = obesity["Nutritional Status"].values
+obesity = obesity.drop("Nutritional Status", axis=1)
 
 number = LabelEncoder()
-data['Gender'] = number.fit_transform(data['Gender'])
-data["Transportation Used"] = number.fit_transform(data["Transportation Used"].astype('str'))
+obesity['Gender'] = number.fit_transform(obesity['Gender'])
+obesity["Transportation Used"] = number.fit_transform(obesity["Transportation Used"].astype('str'))
+
+obesity_copy = obesity.copy()
+data_reduce = obesity_copy.iloc[:, 2:4]
 
 scaler = StandardScaler()
-scaled_array = scaler.fit_transform(data)
-data_scaled = pd.DataFrame(scaled_array, columns=data.columns)
-data_reduced = data_scaled
+scaled_array = scaler.fit_transform(obesity)
+data_scaled = pd.DataFrame(scaled_array, columns=obesity.columns)
 
-n = 5  # con scaling
-# n = 10 # senza scaling e senza PCA, con scaling e con PCA, solo PCA
-x, eps = elbow_method(data_reduced, n)
+#data = data_reduce
+data = data_scaled
+
+n = 5
+x, eps = elbow_method(data, n, config='data reduced')
 print("eps=" + str(eps))
 
-select_parameter(eps, data_reduced)
+#select_parameter(eps, data, config='data reduced')
 
-min_points = 5
-db = DBSCAN(eps=5.26, min_samples=min_points).fit(data_reduced)
+#eps_data_scaled = 5.26
+#eps = eps_data_scaled
+
+#eps_data_reduce = 0.694
+#eps = eps_data_reduce
+
+min_points = 15
+db = DBSCAN(eps=eps, min_samples=min_points).fit(data)
 
 ymeans = db.labels_
 
@@ -135,16 +145,17 @@ completeness = metrics.completeness_score(ymeans, labels)
 v_measure = metrics.v_measure_score(ymeans, labels)
 ari = metrics.adjusted_rand_score(ymeans, labels)
 ami = metrics.adjusted_rand_score(ymeans, labels)
-silhouette = metrics.silhouette_score(data_reduced, ymeans)
-m_calinski = metrics.calinski_harabasz_score(data_reduced, ymeans)
-m_bouldin = metrics.davies_bouldin_score(data_reduced, ymeans)
+silhouette = metrics.silhouette_score(data, ymeans)
+m_calinski = metrics.calinski_harabasz_score(data, ymeans)
+m_bouldin = metrics.davies_bouldin_score(data, ymeans)
 
-df = pd.DataFrame({'Scaling': ['yes'],
+unique, counts = np.unique(ymeans, return_counts=True)
+
+df = pd.DataFrame({'Scaling': ['no'],
                    'knn': n,
                    'eps': eps,
                    'min points': min_points,
                    'n_cluster': n_clusters_,
-                   'noise points': n_noise_,
                    'homogeneity': homogeneity,
                    'completeness': completeness,
                    'v_measure': v_measure,
@@ -153,6 +164,7 @@ df = pd.DataFrame({'Scaling': ['yes'],
                    'calinksi': m_calinski,
                    'bouldin': m_bouldin,
                    'silhouette': silhouette,
+                   'sample': str(dict(zip(unique,counts)))
                    })
 
 df.to_csv('metrics_DBSCAN.csv', header=None, index=False, mode='a')
@@ -162,14 +174,14 @@ print(f"Completeness: {metrics.completeness_score(ymeans, labels):.3f}")
 print(f"V-measure: {metrics.v_measure_score(ymeans, labels):.3f}")
 print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(ymeans, labels):.3f}")
 print("Adjusted Mutual Information:"f" {metrics.adjusted_mutual_info_score(ymeans, labels):.3f}")
-print(f"Calinski Harabasz Score: {metrics.calinski_harabasz_score(data_reduced, ymeans):.3f}")
-print(f"Davies Bouldin Score: {metrics.davies_bouldin_score(data_reduced, ymeans):.3f}")
-print(f"Silhouette Coefficient: {metrics.silhouette_score(data_reduced, ymeans):.3f}")
+print(f"Calinski Harabasz Score: {metrics.calinski_harabasz_score(data, ymeans):.3f}")
+print(f"Davies Bouldin Score: {metrics.davies_bouldin_score(data, ymeans):.3f}")
+print(f"Silhouette Coefficient: {metrics.silhouette_score(data, ymeans):.3f}")
 print("Estimated number of clusters: %d" % n_clusters_)
 print("Estimated number of noise points: %d" % n_noise_)
 
 '''
-print(CDbw(data_reduced.values, ymeans, metric="euclidean"))
+print(CDbw(data.values, ymeans, metric="euclidean"))
 
 plt.figure(figsize=(15,8))
 plt.title('Cluster of PCAs', fontsize = 30)
@@ -187,10 +199,12 @@ plt.show()'''
 plt.figure(figsize=(15, 8))
 plt.title('Cluster of PCAs', fontsize=30)
 
+colors = ['#00FFFF', '#76EEC6', '#EED5B7']
+
 for i in range(-1, n_clusters_ + 1):
-    plt.scatter(data_reduced.values[ymeans == i, 2], data_reduced.values[ymeans == i, 3], s=100)
+    plt.scatter(data.values[ymeans == i, 3], data.values[ymeans == i, 2], s=100, c= colors[i])
     if i == -1:
-        plt.scatter(data_reduced.values[ymeans == i, 2], data_reduced.values[ymeans == i, 3], s=100, c='black')
+        plt.scatter(data.values[ymeans == i, 3], data.values[ymeans == i, 2], s=100, c='black')
 
 plt.xlabel('Weight')
 plt.ylabel('Height')
