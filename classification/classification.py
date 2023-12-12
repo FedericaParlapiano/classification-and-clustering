@@ -75,16 +75,16 @@ def random_forest():
     return y_pred_rf, rf_dict
 
 
-def SVC_nogs():
+def SVC_ngs():
     # Support Vector Machine Classifier without GridSearch
     svc = SVC()
     svc.fit(X_train, y_train)
     y_pred_svc = svc.predict(X_test)
-    save_confusion_matrix(y_test, y_pred_svc, 'SVC.png', 'Support Vector Machine Classifier without GridSearch')
+    save_confusion_matrix(y_test, y_pred_svc, 'SVC_ngs.png', 'Support Vector Machine Classifier without GridSearch')
     return y_pred_svc
 
 
-def SVC_gs():
+def SVC():
     # Support Vector Machine Classifier with GRID
     param_grid_svc = {'C': [0.1, 1, 10, 100, 1000],
                       'gamma': [1, 0.1, 0.01, 'auto'],
@@ -95,7 +95,7 @@ def SVC_gs():
     grid_svc.fit(X_train, y_train)
     best_params_svc = str(grid_svc.best_params_)
     y_pred_grid_svc = grid_svc.predict(X_test)
-    save_confusion_matrix(y_test, y_pred_grid_svc, 'SVC_gs.png', 'Support Vector Machine Classifier with GridSearch')
+    save_confusion_matrix(y_test, y_pred_grid_svc, 'SVC.png', 'Support Vector Machine Classifier with GridSearch')
     return y_pred_grid_svc, best_params_svc
 
 def logistic_regression_ngs():
@@ -103,6 +103,7 @@ def logistic_regression_ngs():
     logistic_regression = LogisticRegression()
     logistic_regression.fit(X_train, y_train)
     y_pred_lr = logistic_regression.predict(X_test)
+    save_confusion_matrix(y_test, y_pred_lr, 'LogisticRegression_ngs.png', 'Logistic Regression Classifier')
     return y_pred_lr
 
 
@@ -143,10 +144,10 @@ def XGboost():
 
 def AdaBoost_ngs():
     # AdaBoost Classifier
-    dtc = DecisionTreeClassifier()
-    adaboost = AdaBoostClassifier(estimator=dtc, n_estimators=100, random_state=6)
+    adaboost = AdaBoostClassifier(n_estimators=100, random_state=6)
     adaboost.fit(X_train, y_train)
     y_pred_ab = adaboost.predict(X_test)
+    save_confusion_matrix(y_test, y_pred_ab, 'AdaBoost_ngs.png', 'AdaBoost Classifier')
     return y_pred_ab
 
 
@@ -241,10 +242,11 @@ def random_forest_timecomplexity():
 
 # save confusion matrix
 
+
 y_pred_dt, dt_dict = decision_tree()
 y_pred_rf, rf_dict = random_forest()
-y_pred_grid_svc, optimal_svc = SVC_gs()
-y_pred_svc = SVC_nogs()
+y_pred_grid_svc, optimal_svc = SVC()
+y_pred_svc = SVC_ngs()
 y_pred_lr, optimal_lr = logistic_regression()
 y_pred_lr_ngs = logistic_regression_ngs()
 y_pred_xgb, xg_dict = XGboost()
@@ -275,8 +277,6 @@ plt.show()
 
 # comparisons
 fig, ax = plt.subplots(figsize=(11, 3))
-
-# vedere area
 ax = sns.lineplot(x=y_test, y=y_pred_xgb,
                   label='XGBoost')
 ax1 = sns.lineplot(x=y_test, y=y_pred_gb,
@@ -311,8 +311,8 @@ def plot_accuracy_bar():
     plt.show()
 
 
-"""plot_accuracy_bar()
-"""
+plot_accuracy_bar()
+
 
 # Writing result in output file
 with open(output_file_path, 'w') as f:
@@ -344,11 +344,3 @@ with open(output_file_path, 'w') as f:
     f.write(f'Support Vector Machine Classifier with GridSearch: {optimal_svc}\n')
     f.write(f'Logistic Regression Classifier with GridSearch: {optimal_lr}\n')
     f.write(f'AdaBoost Classifier with GridSearch: {optimal_ab}\n')
-
-
-print(f'Logistic Regression without GridSearch: {accuracy_score(y_test, y_pred_lr_ngs)}\n')
-print(f'AdaBoost Classifier without GridSearch: {accuracy_score(y_test, y_pred_ab_ngs)}\n')
-print('\n')
-print(f'Logistic Regression without GridSearch: {classification_report(y_test, y_pred_lr_ngs)}\n')
-print(f'AdaBoost Classifier without GridSearch: {classification_report(y_test, y_pred_ab_ngs)}\n')
-

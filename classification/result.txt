@@ -8,7 +8,7 @@ Support Vector Machine Classifier with GridSearch: 0.9550827423167849
 Logistic Regression without GridSearch: 0.6359338061465721
 Logistic Regression with GridSearch: 0.8416075650118203
 XGBoost Classifier: 0.9598108747044918
-AdaBoost Classifier without GridSearch: 0.9101654846335697
+AdaBoost Classifier without GridSearch: 0.27423167848699764
 AdaBoost Classifier with GridSearch: 0.9810874704491725
 Gradient Boosting Classifier: 0.9479905437352246
 
@@ -137,17 +137,17 @@ weighted avg       0.98      0.98      0.98       423
 AdaBoost Classifier without GridSearch:
               precision    recall  f1-score   support
 
-           0       0.91      0.94      0.93        54
-           1       0.83      0.74      0.78        58
-           2       0.92      0.97      0.94        70
-           3       0.98      0.97      0.97        60
-           4       0.98      0.98      0.98        65
-           5       0.77      0.88      0.82        58
-           6       0.98      0.86      0.92        58
+           0       1.00      0.07      0.14        54
+           1       0.34      0.45      0.39        58
+           2       0.19      0.41      0.26        70
+           3       0.00      0.00      0.00        60
+           4       0.00      0.00      0.00        65
+           5       0.31      0.98      0.47        58
+           6       0.00      0.00      0.00        58
 
-    accuracy                           0.91       423
-   macro avg       0.91      0.91      0.91       423
-weighted avg       0.91      0.91      0.91       423
+    accuracy                           0.27       423
+   macro avg       0.26      0.27      0.18       423
+weighted avg       0.25      0.27      0.18       423
 
 Gradient Boosting Classifier:
               precision    recall  f1-score   support
