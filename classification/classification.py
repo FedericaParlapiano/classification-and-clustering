@@ -78,8 +78,7 @@ def SVC_nogs():
     svc.fit(X_train, y_train)
     y_pred_svc = svc.predict(X_test)
     save_confusion_matrix(y_test, y_pred_svc, 'SVC.png', 'Support Vector Machine Classifier without GridSearch')
-    SVM_ngs = dict(zip(svc.feature_names_in_, svc.feature_importances_))
-    return y_pred_svc, SVM_ngs
+    return y_pred_svc
 
 
 def SVC_gs():
@@ -308,4 +307,3 @@ with open(output_file_path, 'w') as f:
     f.write(f'Support Vector Machine Classifier with GridSearch: {optimal_svc}\n')
     f.write(f'Logistic Regression Classifier with GridSearch: {optimal_lr}\n')
     f.write(f'AdaBoost Classifier with GridSearch: {optimal_ab}\n')
-"""
