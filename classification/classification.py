@@ -277,7 +277,7 @@ def plot_accuracy_bar():
     models = ['Decision Tree', 'Random Forest', 'Support Vector Machine GS', 'Logistic Regression', 'XGBoost',
               'AbaBoost', 'Gradient Boosting']
     accuracies = [accuracy_score(y_test, y_pred_dt), accuracy_score(y_test, y_pred_rf),
-                  0.955082742316784, accuracy_score(y_test, y_pred_lr),
+                  accuracy_score(y_test, y_pred_grid_svc), accuracy_score(y_test, y_pred_lr),
                   accuracy_score(y_test, y_pred_xgb), accuracy_score(y_test, y_pred_ab),
                   accuracy_score(y_test, y_pred_gb)]
 
