@@ -123,7 +123,8 @@ ax1.set_ylabel("EPSILON"); ax2.set_ylabel("EPSILON")
 plt.tight_layout()
 plt.show()
 '''
-db = DBSCAN(eps=eps, min_samples=10).fit(data_reduced)
+min_points = 10
+db = DBSCAN(eps=eps, min_samples=min_points).fit(data_reduced)
 
 ymeans = db.labels_
 
@@ -131,29 +132,55 @@ ymeans = db.labels_
 n_clusters_ = len(set(ymeans)) - (1 if -1 in ymeans else 0)
 n_noise_ = list(ymeans).count(-1)
 
-print(f"Homogeneity: {metrics.homogeneity_score(ymeans, labels):.3f}")
-print(f"Completeness: {metrics.completeness_score(ymeans, labels):.3f}")
-print(f"V-measure: {metrics.v_measure_score(ymeans, labels):.3f}")
-print(f"Adjusted Rand Index: {metrics.adjusted_rand_score(ymeans, labels):.3f}")
+homogeneity = metrics.homogeneity_score(ymeans, labels)
+completeness = metrics.completeness_score(ymeans, labels)
+v_measure = metrics.v_measure_score(ymeans, labels)
+ari = metrics.adjusted_rand_score(ymeans, labels)
+ami = metrics.adjusted_rand_score(ymeans, labels)
+calinksi = 0
+silhouette = metrics.silhouette_score(data_reduced, ymeans)
+calinski = metrics.calinski_harabasz_score(data_reduced, ymeans)
+bouldin = metrics.davies_bouldin_score(data_reduced, ymeans)
+
+print(f"Homogeneity: {homogeneity:.3f}")
+print(f"Completeness: {completeness:.3f}")
+print(f"V-measure: {v_measure:.3f}")
+print(f"Adjusted Rand Index: {ari:.3f}")
 print(
     "Adjusted Mutual Information:"
-    f" {metrics.adjusted_mutual_info_score(ymeans, labels):.3f}"
+    f" {ami:.3f}"
 )
+print(f"Silhouette Coefficient: {silhouette:.3f}")
 print(f"Calinski Harabasz Score: {metrics.calinski_harabasz_score(data_reduced, ymeans):.3f}")
 print(f"Davies Bouldin Score: {metrics.davies_bouldin_score(data_reduced, ymeans):.3f}")
-print(f"Silhouette Coefficient: {metrics.silhouette_score(data_reduced, ymeans):.3f}")
 
 print("Estimated number of clusters: %d" % n_clusters_)
 print("Estimated number of noise points: %d" % n_noise_)
 
+#print(CDbw(data_reduced.values, ymeans, metric="euclidean"))
 
-'''
-print(CDbw(data_reduced.values, ymeans, metric="euclidean"))
+df = pd.DataFrame({'PCA': ['yes'],
+                   'Scaling': ['yes'],
+                   'knn': n,
+                   'eps': eps,
+                   'min points': min_points,
+                   'homogeneity': homogeneity,
+                   'completeness': completeness,
+                   'v_measure': v_measure,
+                   'ari': ari,
+                   'ami': ami,
+                   'calinksi': calinksi,
+                   'bouldin': bouldin,
+                   'silhouette': silhouette,
+                   })
+
+df.to_csv('metrics_DBSCAN.csv', header=None, index=False, mode='a')
+
 
 plt.figure(figsize=(15,8))
 plt.title('Cluster of PCAs', fontsize = 30)
 
-for i in range(-1, n_clusters_+1):
+'''for i in range(-1, n_clusters_+1):
     plt.scatter(pca_x[ymeans == i, 0], pca_x[ymeans == i, 1], s = 100)
     if i == -1:
         plt.scatter(pca_x[ymeans == i, 0], pca_x[ymeans == i, 1], s=100, c='black')
@@ -164,7 +191,7 @@ plt.legend()
 plt.show()'''
 
 plt.figure(figsize=(15,8))
-plt.title('Cluster of PCAs', fontsize = 30)
+plt.title('Cluster of PCAs', fontsize= 30)
 
 for i in range(-1, n_clusters_+1):
     plt.scatter(data_reduced.values[ymeans == i, 2], data_reduced.values[ymeans == i, 3], s = 100)
