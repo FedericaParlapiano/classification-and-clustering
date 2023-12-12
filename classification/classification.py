@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -11,6 +12,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import collections
 import time
+
+from yellowbrick.model_selection import LearningCurve
 
 # Data
 file = '../data/obesity_dataset_clean.csv'
@@ -112,6 +115,12 @@ def logistic_regression():
     y_pred_lr = grid_lr.predict(X_test)
     best_params = str(grid_lr.best_params_)
     save_confusion_matrix(y_test, y_pred_lr, 'LogisticRegression.png', 'Logistic Regression Classifier')
+
+    sizes = np.linspace(0.3, 1.0, 10)
+    visualizer = LearningCurve(logistic_regression, scoring='accuracy', train_sizes=sizes)
+    visualizer.fit(X_train, y_train)
+    visualizer.show()
+
     return y_pred_lr, best_params
 
 
@@ -139,6 +148,12 @@ def AdaBoost():
     y_pred_ab = gs.predict(X_test)
     save_confusion_matrix(y_test, y_pred_ab, 'AdaBoost.png', 'AdaBoost Classifier')
     ada = dict(zip(gs.best_estimator_.feature_names_in_, gs.best_estimator_.feature_importances_))
+
+    sizes = np.linspace(0.3, 1.0, 10)
+    visualizer = LearningCurve(adaboost, scoring='accuracy', train_sizes=sizes)
+    visualizer.fit(X_train, y_train)
+    visualizer.show()
+
     return y_pred_ab, gs.best_params_, ada
 
 
@@ -257,13 +272,12 @@ plt.savefig('plots/Comparison', bbox_inches='tight')
 plt.show()
 
 
-
 # Plot accuracy
 def plot_accuracy_bar():
     models = ['Decision Tree', 'Random Forest', 'Support Vector Machine GS', 'Logistic Regression', 'XGBoost',
               'AbaBoost', 'Gradient Boosting']
     accuracies = [accuracy_score(y_test, y_pred_dt), accuracy_score(y_test, y_pred_rf),
-                  accuracy_score(y_test, y_pred_grid_svc), accuracy_score(y_test, y_pred_lr),
+                  0.955082742316784, accuracy_score(y_test, y_pred_lr),
                   accuracy_score(y_test, y_pred_xgb), accuracy_score(y_test, y_pred_ab),
                   accuracy_score(y_test, y_pred_gb)]
 
