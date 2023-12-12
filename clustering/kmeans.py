@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 from yellowbrick.cluster import KElbowVisualizer
 from matplotlib import cm
@@ -11,6 +12,7 @@ from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.pipeline import make_pipeline
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder
+
 
 def silhouette_analysis(range_n_clusters, X):
     for n_clusters in range_n_clusters:
@@ -46,6 +48,8 @@ def silhouette_analysis(range_n_clusters, X):
         sample_silhouette_values = silhouette_samples(X, cluster_labels)
 
         y_lower = 10
+        colors = iter([plt.cm.Paired(i) for i in range(0,20)])
+        list = []
         for i in range(n_clusters):
             # Aggregate the silhouette scores for samples belonging to
             # cluster i, and sort them
@@ -56,21 +60,22 @@ def silhouette_analysis(range_n_clusters, X):
             size_cluster_i = ith_cluster_silhouette_values.shape[0]
             y_upper = y_lower + size_cluster_i
 
-            color = cm.nipy_spectral(float(i) / n_clusters)
+            list.append(next(colors))
             ax1.fill_betweenx(
                 np.arange(y_lower, y_upper),
                 0,
                 ith_cluster_silhouette_values,
-                facecolor=color,
-                edgecolor=color,
+                color=list[-1],
+                edgecolor='w',
                 alpha=0.7,
             )
-
+            next(colors)
             # Label the silhouette plots with their cluster numbers at the middle
             ax1.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
 
             # Compute the new y_lower for next plot
             y_lower = y_upper + 10  # 10 for the 0 samples
+
 
         ax1.set_title("The silhouette plot for the various clusters.")
         ax1.set_xlabel("The silhouette coefficient values")
@@ -83,9 +88,17 @@ def silhouette_analysis(range_n_clusters, X):
         ax1.set_xticks([-0.1, 0, 0.2, 0.4, 0.6, 0.8, 1])
 
         # 2nd Plot showing the actual clusters formed
-        colors = cm.nipy_spectral(cluster_labels.astype(float) / n_clusters)
+        colors = []
+        for c in range(0, len(X)):
+            if cluster_labels[c] == 0:
+                colors.append(list[0])
+            elif cluster_labels[c] == 1:
+                colors.append(list[1])
+            elif cluster_labels[c] == 2:
+                colors.append(list[2])
+
         ax2.scatter(
-            X[:, 0], X[:, 1], marker=".", s=30, lw=0, alpha=0.7, c=colors, edgecolor="k"
+            X[:, 0], X[:, 1], marker=".", s=30, lw=0, alpha=0.7, c=np.array(colors), edgecolor="k"
         )
 
         # Labeling the clusters
@@ -119,6 +132,7 @@ def silhouette_analysis(range_n_clusters, X):
     plt.show()
 
 
+
 def elbow_method(X):
     # Instantiate the clustering model and visualizer
     model = KMeans()
@@ -133,6 +147,7 @@ def elbow_method(X):
     visualizer = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
     visualizer.fit(X)
     visualizer.show()
+
 
 def bench_k_means(kmeans, name, data, labels):
     """Benchmark to evaluate the KMeans initialization methods.
@@ -198,7 +213,7 @@ number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
 data['Transportation Used'] = number.fit_transform(data['Transportation Used'])
 
-elbow_method(data.values)
+#elbow_method(data.values)
 
 print(80 * "_")
 print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI   \tAMI   \tsilhouette")
@@ -213,9 +228,8 @@ d_pca1 = data.copy()
 d_pca2 = data.copy()
 d_pca3 = data.copy()
 d_pca4 = data.copy()
-pc = 2
 
-pca = PCA(n_components=pc).fit_transform(d_pca1)
+pca = PCA(n_components=2).fit_transform(d_pca1)
 kmeans = KMeans(init='k-means++', n_clusters=n_digits, n_init=1, random_state=0)
 bench_k_means(kmeans=kmeans, name="PCA2-based", data=pca, labels=labels)
 
@@ -232,7 +246,7 @@ kmeans.fit(data_reduced)
 
 print(80 * "_")
 
-pca = PCA(n_components=pc)
+pca = PCA(n_components=2)
 pca_x = pca.fit_transform(d_pca4)
 data_reduced = pd.DataFrame(pca_x).values
 
@@ -280,8 +294,8 @@ plt.xlim(x_min, x_max)
 plt.ylim(y_min, y_max)
 plt.xticks(())
 plt.yticks(())
-plt.show()
 plt.savefig('grafici/kmean', bbox_inches='tight')
+plt.show()
+
 
 silhouette_analysis([3], data_reduced)
-
