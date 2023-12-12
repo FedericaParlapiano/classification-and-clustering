@@ -10,6 +10,21 @@ from sklearn.neighbors import NearestNeighbors
 from kneed import KneeLocator
 
 
+def elbow_method(dataset, n_knn):
+    neighbors = NearestNeighbors(n_neighbors=n_knn)
+    neighbors_fit = neighbors.fit(dataset)
+    distances, indices = neighbors_fit.kneighbors(dataset)
+    distances = np.sort(distances, axis=0)
+    distances = distances[:, 1]
+
+    kl = KneeLocator(range(1, len(distances) + 1), distances, curve="convex")
+    kl.plot_knee()
+    plt.show()
+    plt.savefig('grafici/elbow_dbscan', bbox_inches='tight')
+
+    return kl.elbow, kl.knee_y
+
+
 def get_metrics(eps, min_samples, dataset, iter_):
     # Fitting ======================================================================
 
@@ -50,22 +65,9 @@ scaled_array = scaler.fit_transform(data)
 data_scaled = pd.DataFrame(scaled_array, columns=data.columns)
 data_reduced = data_scaled
 
-
-n = 5 # con scaling
-#n = 10 # senza scaling e senza PCA, con scaling e con PCA, solo PCA
-neighbors = NearestNeighbors(n_neighbors=n)
-neighbors_fit = neighbors.fit(data_reduced)
-distances, indices = neighbors_fit.kneighbors(data_reduced)
-distances = np.sort(distances, axis=0)
-distances = distances[:, 1]
-
-kl = KneeLocator(range(1, len(distances) + 1), distances, curve="convex")
-kl.plot_knee()
-# plt.show()
-
-x = kl.elbow
-eps = kl.knee_y
-
+n = 5  # con scaling
+# n = 10 # senza scaling e senza PCA, con scaling e con PCA, solo PCA
+x, eps = elbow_method(data_reduced, n)
 print("eps=" + str(eps))
 
 eps_to_test = [round(eps, 2) for eps in np.arange((eps - 0.05), eps + 0.05, 0.01)]
@@ -101,14 +103,15 @@ for eps in eps_to_test:
         results_noise.loc[eps, min_samples] = noise_metric
         results_clusters.loc[eps, min_samples] = cluster_metric
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,8))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 8))
 
-sns.heatmap(results_noise, annot = True, ax = ax1, cbar = False).set_title("METRIC: Mean Noise Points Distance")
-sns.heatmap(results_clusters, annot = True, ax = ax2, cbar = False).set_title("METRIC: Number of clusters")
+sns.heatmap(results_noise, annot=True, ax=ax1, cbar=False).set_title("METRIC: Mean Noise Points Distance")
+sns.heatmap(results_clusters, annot=True, ax=ax2, cbar=False).set_title("METRIC: Number of clusters")
 
-
-ax1.set_xlabel("N"); ax2.set_xlabel("N")
-ax1.set_ylabel("EPSILON"); ax2.set_ylabel("EPSILON")
+ax1.set_xlabel("N");
+ax2.set_xlabel("N")
+ax1.set_ylabel("EPSILON");
+ax2.set_ylabel("EPSILON")
 
 plt.tight_layout()
 plt.show()
@@ -160,8 +163,6 @@ print(f"Silhouette Coefficient: {metrics.silhouette_score(data_reduced, ymeans):
 print("Estimated number of clusters: %d" % n_clusters_)
 print("Estimated number of noise points: %d" % n_noise_)
 
-
-
 '''
 print(CDbw(data_reduced.values, ymeans, metric="euclidean"))
 
@@ -178,11 +179,11 @@ plt.ylabel('PCA2')
 plt.legend()
 plt.show()'''
 
-plt.figure(figsize=(15,8))
-plt.title('Cluster of PCAs', fontsize= 30)
+plt.figure(figsize=(15, 8))
+plt.title('Cluster of PCAs', fontsize=30)
 
-for i in range(-1, n_clusters_+1):
-    plt.scatter(data_reduced.values[ymeans == i, 2], data_reduced.values[ymeans == i, 3], s = 100)
+for i in range(-1, n_clusters_ + 1):
+    plt.scatter(data_reduced.values[ymeans == i, 2], data_reduced.values[ymeans == i, 3], s=100)
     if i == -1:
         plt.scatter(data_reduced.values[ymeans == i, 2], data_reduced.values[ymeans == i, 3], s=100, c='black')
 
@@ -190,5 +191,3 @@ plt.xlabel('Weight')
 plt.ylabel('Height')
 plt.legend()
 plt.show()
-
-
