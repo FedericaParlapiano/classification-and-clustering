@@ -98,6 +98,13 @@ def SVC_gs():
     save_confusion_matrix(y_test, y_pred_grid_svc, 'SVC_gs.png', 'Support Vector Machine Classifier with GridSearch')
     return y_pred_grid_svc, best_params_svc
 
+def logistic_regression_ngs():
+    # Logistic Regression Classifier
+    logistic_regression = LogisticRegression()
+    logistic_regression.fit(X_train, y_train)
+    y_pred_lr = logistic_regression.predict(X_test)
+    return y_pred_lr
+
 
 def logistic_regression():
     # Logistic Regression Classifier
@@ -132,6 +139,15 @@ def XGboost():
     save_confusion_matrix(y_test, y_pred_xgb, 'XGBoost.png', 'XGBoost Classifier')
     XGboost = dict(zip(xgb.feature_names_in_, xgb.feature_importances_))
     return y_pred_xgb, XGboost
+
+
+def AdaBoost_ngs():
+    # AdaBoost Classifier
+    dtc = DecisionTreeClassifier()
+    adaboost = AdaBoostClassifier(estimator=dtc, n_estimators=100, random_state=6)
+    adaboost.fit(X_train, y_train)
+    y_pred_ab = adaboost.predict(X_test)
+    return y_pred_ab
 
 
 def AdaBoost():
@@ -230,9 +246,12 @@ y_pred_rf, rf_dict = random_forest()
 y_pred_grid_svc, optimal_svc = SVC_gs()
 y_pred_svc = SVC_nogs()
 y_pred_lr, optimal_lr = logistic_regression()
+y_pred_lr_ngs = logistic_regression_ngs()
 y_pred_xgb, xg_dict = XGboost()
 y_pred_ab, optimal_ab, ab_dict = AdaBoost()
+y_pred_ab_ngs = AdaBoost_ngs()
 y_pred_gb, gb_dict = GradientBoosting()
+
 
 # heatmap feature importances
 
@@ -292,8 +311,8 @@ def plot_accuracy_bar():
     plt.show()
 
 
-plot_accuracy_bar()
-
+"""plot_accuracy_bar()
+"""
 
 # Writing result in output file
 with open(output_file_path, 'w') as f:
@@ -302,9 +321,11 @@ with open(output_file_path, 'w') as f:
     f.write(f'Random Forest Classifier: {accuracy_score(y_test, y_pred_rf)}\n')
     f.write(f'Support Vector Machine Classifier without GridSearch: {accuracy_score(y_test, y_pred_svc)}\n')
     f.write(f'Support Vector Machine Classifier with GridSearch: {accuracy_score(y_test, y_pred_grid_svc)}\n')
-    f.write(f'Logistic Regression: {accuracy_score(y_test, y_pred_lr)}\n')
+    f.write(f'Logistic Regression without GridSearch: {accuracy_score(y_test, y_pred_lr_ngs)}\n')
+    f.write(f'Logistic Regression with GridSearch: {accuracy_score(y_test, y_pred_lr)}\n')
     f.write(f'XGBoost Classifier: {accuracy_score(y_test, y_pred_xgb)}\n')
-    f.write(f'AdaBoost Classifier: {accuracy_score(y_test, y_pred_ab)}\n')
+    f.write(f'AdaBoost Classifier without GridSearch: {accuracy_score(y_test, y_pred_ab_ngs)}\n')
+    f.write(f'AdaBoost Classifier  with GridSearch: {accuracy_score(y_test, y_pred_ab)}\n')
     f.write(f'Gradient Boosting Classifier: {accuracy_score(y_test, y_pred_gb)}\n')
 
     f.write('\n<------------------------------------- Classification Report ------------------------------------->\n\n')
@@ -312,12 +333,22 @@ with open(output_file_path, 'w') as f:
     f.write(f'Random Forest Classifier:\n{classification_report(y_test, y_pred_rf)}\n')
     f.write(f'Support Vector Machine Classifier without GridSearch:\n{classification_report(y_test, y_pred_svc)}\n')
     f.write(f'Support Vector Machine Classifier with GridSearch:\n{classification_report(y_test, y_pred_grid_svc)}\n')
-    f.write(f'Logistic Regression:\n{classification_report(y_test, y_pred_lr)}\n')
+    f.write(f'Logistic Regression without GridSearch: {classification_report(y_test, y_pred_lr_ngs)}\n')
+    f.write(f'Logistic Regression with GridSearch:\n{classification_report(y_test, y_pred_lr)}\n')
     f.write(f'XGBoost Classifier:\n{classification_report(y_test, y_pred_xgb)}\n')
-    f.write(f'AdaBoost Classifier:\n{classification_report(y_test, y_pred_ab)}\n')
+    f.write(f'AdaBoost Classifier without GridSearch: {classification_report(y_test, y_pred_ab_ngs)}\n')
+    f.write(f'AdaBoost Classifier with GridSearch:\n{classification_report(y_test, y_pred_ab)}\n')
     f.write(f'Gradient Boosting Classifier:\n{classification_report(y_test, y_pred_gb)}')
 
     f.write('\n<------------------------------ Optimal Parameters for Grid Search ------------------------------->\n\n')
     f.write(f'Support Vector Machine Classifier with GridSearch: {optimal_svc}\n')
     f.write(f'Logistic Regression Classifier with GridSearch: {optimal_lr}\n')
     f.write(f'AdaBoost Classifier with GridSearch: {optimal_ab}\n')
+
+
+print(f'Logistic Regression without GridSearch: {accuracy_score(y_test, y_pred_lr_ngs)}\n')
+print(f'AdaBoost Classifier without GridSearch: {accuracy_score(y_test, y_pred_ab_ngs)}\n')
+print('\n')
+print(f'Logistic Regression without GridSearch: {classification_report(y_test, y_pred_lr_ngs)}\n')
+print(f'AdaBoost Classifier without GridSearch: {classification_report(y_test, y_pred_ab_ngs)}\n')
+
