@@ -43,7 +43,6 @@ Y = obesity['Nutritional Status']
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, stratify=Y, random_state=13)
 
 
-
 def save_confusion_matrix(y_test, y_pred, file_name, title):
     conf_matrix = confusion_matrix(y_test, y_pred)
     sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=list(label_dict_ordered.values()),
@@ -85,7 +84,6 @@ def SVC_nogs():
     return y_pred_svc, SVM_ngs
 
 
-
 def SVC_gs():
     # Support Vector Machine Classifier with GRID
     param_grid_svc = {'C': [0.1, 1, 10, 100, 1000],
@@ -115,7 +113,6 @@ def logistic_regression():
                                verbose=3)
     grid_lr.fit(X_train, y_train)
     y_pred_lr = grid_lr.predict(X_test)
-    print(accuracy_score(y_test,y_pred_lr))
     best_params = str(grid_lr.best_params_)
     save_confusion_matrix(y_test, y_pred_lr, 'LogisticRegression.png', 'Logistic Regression Classifier')
     return y_pred_lr, best_params
@@ -156,7 +153,6 @@ def GradientBoosting():
     save_confusion_matrix(y_test, y_pred_gb, 'GradientBoosting.png', 'Gradient Boosting Classifier')
     gradient = dict(zip(gradient_boost.feature_names_in_, gradient_boost.feature_importances_))
     return y_pred_gb, gradient
-
 
 
 # Overfitting and Time complexity
@@ -241,6 +237,8 @@ d = {'Random Forest': pd.Series(rf_dict.values(),
 
 feature_importance = pd.DataFrame(d)
 sns.heatmap(feature_importance, cmap="crest")
+plt.title('Feature importance by model')
+plt.savefig('plots/Heatmap', bbox_inches='tight')
 plt.show()
 
 
@@ -257,13 +255,36 @@ ax2 = sns.lineplot(x=y_test, y=y_pred_ab,
 
 ax.set_xlabel('y_test', color='g')
 ax.set_ylabel('y_pred', color='g')
-
+plt.title('Comparison between models')
+plt.savefig('plots/comparison', bbox_inches='tight')
 plt.show()
 
 
 # time complexity and overfitting
 #random_forest_timecomplexity()
 #decision_tree_overfitting()
+
+# Plot accuracy
+def plot_accuracy_bar():
+    models = ['Decision Tree', 'Random Forest', 'Support Vector Machine GS', 'Logistic Regression', 'XGBoost',
+              'AbaBoost', 'Gradient Boosting']
+    accuracies = [accuracy_score(y_test, y_pred_dt), accuracy_score(y_test, y_pred_rf),
+                  accuracy_score(y_test, y_pred_grid_svc), accuracy_score(y_test, y_pred_lr),
+                  accuracy_score(y_test, y_pred_xgb), accuracy_score(y_test, y_pred_ab),
+                  accuracy_score(y_test, y_pred_gb)]
+
+    color = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f']
+    plt.bar(models, accuracies, color=color)
+    plt.xlabel('Classifier')
+    plt.ylabel('Accuracy')
+    plt.xticks(rotation=90)
+    plt.title('Classifier Accuracy Comparison')
+    plt.ylim([0, 1])  # Assuming accuracy values are between 0 and 1
+    plt.savefig('plots/Accuracy', bbox_inches='tight')
+    plt.show()
+
+
+plot_accuracy_bar()
 
 
 # Writing result in output file
@@ -291,4 +312,3 @@ with open(output_file_path, 'w') as f:
     f.write('\n<------------------------------ Optimal Parameters for Grid Search ------------------------------->\n\n')
     f.write(f'Support Vector Machine Classifier with GridSearch: {optimal_svc}\n')
     f.write(f'Logistic Regression Classifier with GridSearch: {optimal_lr}\n')
-
