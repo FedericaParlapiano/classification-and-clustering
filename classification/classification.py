@@ -84,7 +84,7 @@ def SVC_nogs():
 def SVC_gs():
     # Support Vector Machine Classifier with GRID
     param_grid_svc = {'C': [0.1, 1, 10, 100, 1000],
-                      'gamma': [1, 0.1, 0.01, 0.001, 0.0001, 'auto'],
+                      'gamma': [1, 0.1, 0.01, 'auto'],
                       'class_weight': ['balanced', 'None'],
                       'kernel': ['rbf', 'linear', 'poly']}
 
@@ -253,7 +253,7 @@ ax2 = sns.lineplot(x=y_test, y=y_pred_ab,
 ax.set_xlabel('y_test', color='g')
 ax.set_ylabel('y_pred', color='g')
 plt.title('Comparison between models')
-plt.savefig('plots/comparison', bbox_inches='tight')
+plt.savefig('plots/Comparison', bbox_inches='tight')
 plt.show()
 
 
