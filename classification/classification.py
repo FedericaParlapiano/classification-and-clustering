@@ -24,7 +24,6 @@ obesity['Nutritional Status'] \
 
 output_file_path = '../classification/result.txt'
 
-
 # Data encoding
 lb = LabelEncoder()
 
@@ -35,7 +34,6 @@ obesity['Nutritional Status'] = lb.fit_transform(obesity['Nutritional Status'])
 
 label_dict = dict(zip(list(obesity['Nutritional Status'].unique()), list(label_names)))
 label_dict_ordered = dict(collections.OrderedDict(sorted(label_dict.items())))
-
 
 # Train-Test split
 X = obesity.drop(['Nutritional Status'], axis=1)
@@ -108,9 +106,9 @@ def logistic_regression():
                   {'max_iter': [100, 150, 200]},
                   {'solver': ['lbfgs', 'liblinear', 'newton-cg', 'newton-cholesky', 'sag', 'saga']}]
     grid_lr = GridSearchCV(estimator=logistic_regression,
-                               param_grid=parameters,
-                               scoring='accuracy',
-                               verbose=3)
+                           param_grid=parameters,
+                           scoring='accuracy',
+                           verbose=3)
     grid_lr.fit(X_train, y_train)
     y_pred_lr = grid_lr.predict(X_test)
     best_params = str(grid_lr.best_params_)
@@ -142,7 +140,7 @@ def AdaBoost():
     y_pred_ab = gs.predict(X_test)
     save_confusion_matrix(y_test, y_pred_ab, 'AdaBoost.png', 'AdaBoost Classifier')
     ada = dict(zip(gs.best_estimator_.feature_names_in_, gs.best_estimator_.feature_importances_))
-    return y_pred_ab, ada
+    return y_pred_ab, gs.best_params_, ada
 
 
 def GradientBoosting():
@@ -170,13 +168,14 @@ def decision_tree_overfitting():
         y_pred_dt = decision_tree.predict(X_test)
         test_acc = accuracy_score(y_test, y_pred_dt)
         test_scores.append(test_acc)
-        save_confusion_matrix(y_test, y_pred_dt, 'DecisionTree.png', 'Decision Tree Classifier')
+        # save_confusion_matrix(y_test, y_pred_dt, 'DecisionTree.png', 'Decision Tree Classifier')
 
     plt.plot(values, train_scores, '-o', label='Train')
     plt.plot(values, test_scores, '-o', label='Test')
     plt.legend()
+    plt.title('Overfitting in Decision Tree')
+    plt.savefig('plot/DToverfitting.png',  bbox_inches='tight')
     plt.show()
-    return y_pred_dt
 
 
 def random_forest_timecomplexity():
@@ -198,15 +197,16 @@ def random_forest_timecomplexity():
         end = time.time()
         times.append(end - start)
         # save_confusion_matrix(y_test, y_pred_rf, 'RandomForest.png', 'Random Forest Classifier')
+    plt.figure(figsize=(12, 7))
     plt.subplot(1, 2, 1)
     plt.plot(values, train_scores, '-o', label='Train')
     plt.plot(values, test_scores, '-o', label='Test')
     plt.legend()
     plt.subplot(1, 2, 2)
     plt.plot(values, times, '-o', label='Time taken')
+    plt.suptitle('Time Complexity by Decision Tree Depth in Random Forest', )
+    plt.savefig('plot/RFTimeComplexity.png',  bbox_inches='tight')
     plt.show()
-
-    return y_pred_rf
 
 
 # save confusion matrix
@@ -217,9 +217,8 @@ y_pred_grid_svc, optimal_svc = SVC_gs()
 y_pred_svc = SVC_nogs()
 y_pred_lr, optimal_lr = logistic_regression()
 y_pred_xgb, xg_dict = XGboost()
-y_pred_ab, ab_dict = AdaBoost()
+y_pred_ab, optimal_ab, ab_dict = AdaBoost()
 y_pred_gb, gb_dict = GradientBoosting()
-
 
 # heatmap feature importances
 
@@ -227,7 +226,7 @@ d = {'Random Forest': pd.Series(rf_dict.values(),
                                 index=rf_dict.keys()),
      'Decision Tree': pd.Series(dt_dict.values(),
                                 index=dt_dict.keys()),
-     'Ada Boost': pd.Series(ab_dict.values(),
+     'AdaBoost': pd.Series(ab_dict.values(),
                             index=ab_dict.keys()),
      'Gradient Boosting': pd.Series(gb_dict.values(),
                                     index=gb_dict.keys()),
@@ -240,7 +239,6 @@ sns.heatmap(feature_importance, cmap="crest")
 plt.title('Feature importance by model')
 plt.savefig('plots/Heatmap', bbox_inches='tight')
 plt.show()
-
 
 # comparisons
 fig, ax = plt.subplots(figsize=(11, 3))
@@ -260,9 +258,6 @@ plt.savefig('plots/comparison', bbox_inches='tight')
 plt.show()
 
 
-# time complexity and overfitting
-#random_forest_timecomplexity()
-#decision_tree_overfitting()
 
 # Plot accuracy
 def plot_accuracy_bar():
@@ -312,3 +307,5 @@ with open(output_file_path, 'w') as f:
     f.write('\n<------------------------------ Optimal Parameters for Grid Search ------------------------------->\n\n')
     f.write(f'Support Vector Machine Classifier with GridSearch: {optimal_svc}\n')
     f.write(f'Logistic Regression Classifier with GridSearch: {optimal_lr}\n')
+    f.write(f'AdaBoost Classifier with GridSearch: {optimal_ab}\n')
+"""
