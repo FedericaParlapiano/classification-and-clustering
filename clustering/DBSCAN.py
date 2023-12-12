@@ -18,11 +18,59 @@ def elbow_method(dataset, n_knn):
     distances = distances[:, 1]
 
     kl = KneeLocator(range(1, len(distances) + 1), distances, curve="convex")
-    kl.plot_knee()
-    plt.show()
+    kl.plot_knee(figsize=(9, 6))
     plt.savefig('grafici/elbow_dbscan', bbox_inches='tight')
+    plt.show()
 
     return kl.elbow, kl.knee_y
+
+
+def select_parameter(eps, dataset):
+    eps_to_test = [round(e, 2) for e in np.arange((eps - 0.05), eps + 0.05, 0.01)]
+    min_samples_to_test = range(5, 15, 1)
+
+    results_noise = pd.DataFrame(
+        data=np.zeros((len(eps_to_test), len(min_samples_to_test))),  # Empty dataframe
+        columns=min_samples_to_test,
+        index=eps_to_test
+    )
+
+    # Dataframe per la metrica sul numero di cluster
+    results_clusters = pd.DataFrame(
+        data=np.zeros((len(eps_to_test), len(min_samples_to_test))),  # Empty dataframe
+        columns=min_samples_to_test,
+        index=eps_to_test
+    )
+
+    iter_ = 0
+
+    print("ITER| INFO%s |  DIST    CLUS" % (" " * 39))
+    print("-" * 65)
+
+    for e in eps_to_test:
+        for min_samples in min_samples_to_test:
+            iter_ += 1
+
+            # Calcolo le metriche
+            noise_metric, cluster_metric = get_metrics(e, min_samples, dataset, iter_)
+
+            # Inserisco i risultati nei relativi dataframe
+            results_noise.loc[e, min_samples] = noise_metric
+            results_clusters.loc[e, min_samples] = cluster_metric
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 8))
+
+    sns.heatmap(results_noise, annot=True, ax=ax1, cbar=False).set_title("METRIC: Mean Noise Points Distance")
+    sns.heatmap(results_clusters, annot=True, ax=ax2, cbar=False).set_title("METRIC: Number of clusters")
+
+    ax1.set_xlabel("N")
+    ax2.set_xlabel("N")
+    ax1.set_ylabel("EPSILON")
+    ax2.set_ylabel("EPSILON")
+
+    plt.tight_layout()
+    plt.savefig('grafici/parametri dbscan', bbox_inches='tight')
+    plt.show()
 
 
 def get_metrics(eps, min_samples, dataset, iter_):
@@ -70,51 +118,7 @@ n = 5  # con scaling
 x, eps = elbow_method(data_reduced, n)
 print("eps=" + str(eps))
 
-eps_to_test = [round(eps, 2) for eps in np.arange((eps - 0.05), eps + 0.05, 0.01)]
-min_samples_to_test = range(5, 15, 1)
-print(eps_to_test)
-
-results_noise = pd.DataFrame(
-    data=np.zeros((len(eps_to_test), len(min_samples_to_test))),  # Empty dataframe
-    columns=min_samples_to_test,
-    index=eps_to_test
-)
-
-# Dataframe per la metrica sul numero di cluster
-results_clusters = pd.DataFrame(
-    data=np.zeros((len(eps_to_test), len(min_samples_to_test))),  # Empty dataframe
-    columns=min_samples_to_test,
-    index=eps_to_test
-)
-
-iter_ = 0
-
-print("ITER| INFO%s |  DIST    CLUS" % (" " * 39))
-print("-" * 65)
-
-for eps in eps_to_test:
-    for min_samples in min_samples_to_test:
-        iter_ += 1
-
-        # Calcolo le metriche
-        noise_metric, cluster_metric = get_metrics(eps, min_samples, data_reduced, iter_)
-
-        # Inserisco i risultati nei relativi dataframe
-        results_noise.loc[eps, min_samples] = noise_metric
-        results_clusters.loc[eps, min_samples] = cluster_metric
-
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 8))
-
-sns.heatmap(results_noise, annot=True, ax=ax1, cbar=False).set_title("METRIC: Mean Noise Points Distance")
-sns.heatmap(results_clusters, annot=True, ax=ax2, cbar=False).set_title("METRIC: Number of clusters")
-
-ax1.set_xlabel("N");
-ax2.set_xlabel("N")
-ax1.set_ylabel("EPSILON");
-ax2.set_ylabel("EPSILON")
-
-plt.tight_layout()
-plt.show()
+select_parameter(eps, data_reduced)
 
 min_points = 5
 db = DBSCAN(eps=5.26, min_samples=min_points).fit(data_reduced)
@@ -140,6 +144,7 @@ df = pd.DataFrame({'Scaling': ['yes'],
                    'eps': eps,
                    'min points': min_points,
                    'n_cluster': n_clusters_,
+                   'noise points': n_noise_,
                    'homogeneity': homogeneity,
                    'completeness': completeness,
                    'v_measure': v_measure,
