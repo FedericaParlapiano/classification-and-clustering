@@ -128,7 +128,7 @@ def silhouette_analysis(range_n_clusters, X):
             fontweight="bold",
         )
 
-    plt.savefig('grafici/silhouette', bbox_inches='tight')
+    plt.savefig('grafici/silhouette_kmeans', bbox_inches='tight')
     plt.show()
 
 
@@ -136,17 +136,17 @@ def silhouette_analysis(range_n_clusters, X):
 def elbow_method(X):
     # Instantiate the clustering model and visualizer
     model = KMeans()
-    visualizer = KElbowVisualizer(model, k=(2, 10))
-    visualizer.fit(X)
-    visualizer.show()
+    visualizer1 = KElbowVisualizer(model, k=(2, 10))
+    visualizer1.fit(X)
+    visualizer1.show(outpath="grafici/kelbow_distorsion.png")
 
-    visualizer = KElbowVisualizer(model, k=(2, 10), metric='calinski_harabasz')
-    visualizer.fit(X)
-    visualizer.show()
+    visualizer2 = KElbowVisualizer(model, k=(2, 10), metric='calinski_harabasz')
+    visualizer2.fit(X)
+    visualizer2.show(outpath="grafici/kelbow_calinksi.png")
 
-    visualizer = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
-    visualizer.fit(X)
-    visualizer.show()
+    visualizer3 = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
+    visualizer3.fit(X)
+    visualizer3.show(outpath="grafici/kelbow_silhouette.png")
 
 
 def bench_k_means(kmeans, name, data, labels):
@@ -213,7 +213,7 @@ number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
 data['Transportation Used'] = number.fit_transform(data['Transportation Used'])
 
-#elbow_method(data.values)
+elbow_method(data.values)
 
 print(80 * "_")
 print("init\t\ttime\tinertia\thomo\tcompl\tv-meas\tARI   \tAMI   \tsilhouette")
@@ -294,8 +294,7 @@ plt.xlim(x_min, x_max)
 plt.ylim(y_min, y_max)
 plt.xticks(())
 plt.yticks(())
-plt.savefig('grafici/kmean', bbox_inches='tight')
+plt.savefig('grafici/kmeans', bbox_inches='tight')
 plt.show()
-
 
 silhouette_analysis([3], data_reduced)
