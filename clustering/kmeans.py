@@ -264,6 +264,8 @@ xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 # Obtain labels for each point in mesh. Use last trained model.
 Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
 
+customcm = mpl.colors.ListedColormap( [ plt.cm.Paired(0), plt.cm.Paired(2), plt.cm.Paired(4) ] )
+
 # Put the result into a color plot
 Z = Z.reshape(xx.shape)
 plt.figure(1)
@@ -272,7 +274,7 @@ plt.imshow(
     Z,
     interpolation="nearest",
     extent=(xx.min(), xx.max(), yy.min(), yy.max()),
-    cmap=plt.cm.Paired,
+    cmap=customcm,
     aspect="auto",
     origin="lower",
 )
