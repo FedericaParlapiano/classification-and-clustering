@@ -4,14 +4,13 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 from yellowbrick.cluster import KElbowVisualizer
-from matplotlib import cm
 from sklearn.cluster import KMeans
 from time import time
 from sklearn import metrics
 from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.pipeline import make_pipeline
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 def silhouette_analysis(range_n_clusters, X):
@@ -48,7 +47,7 @@ def silhouette_analysis(range_n_clusters, X):
         sample_silhouette_values = silhouette_samples(X, cluster_labels)
 
         y_lower = 10
-        colors = iter([plt.cm.Paired(i) for i in range(0,20)])
+        colors = iter([plt.cm.Paired(i) for i in range(0, 20)])
         list = []
         for i in range(n_clusters):
             # Aggregate the silhouette scores for samples belonging to
@@ -75,7 +74,6 @@ def silhouette_analysis(range_n_clusters, X):
 
             # Compute the new y_lower for next plot
             y_lower = y_upper + 10  # 10 for the 0 samples
-
 
         ax1.set_title("The silhouette plot for the various clusters.")
         ax1.set_xlabel("The silhouette coefficient values")
@@ -132,19 +130,21 @@ def silhouette_analysis(range_n_clusters, X):
     plt.show()
 
 
-
 def elbow_method(X):
+
     # Instantiate the clustering model and visualizer
     model = KMeans()
-    visualizer1 = KElbowVisualizer(model, k=(2, 10))
+    visualizer1 = KElbowVisualizer(model, k=(3, 10), metric='distortion')
     visualizer1.fit(X)
-    visualizer1.show(outpath="grafici/kelbow_distorsion.png")
+    visualizer1.show(outpath="grafici/kelbow_distortion.png")
 
-    visualizer2 = KElbowVisualizer(model, k=(2, 10), metric='calinski_harabasz')
+    model = KMeans()
+    visualizer2 = KElbowVisualizer(model, k=(3, 10), metric='calinski_harabasz')
     visualizer2.fit(X)
     visualizer2.show(outpath="grafici/kelbow_calinksi.png")
 
-    visualizer3 = KElbowVisualizer(model, k=(2, 10), metric='silhouette')
+    model = KMeans()
+    visualizer3 = KElbowVisualizer(model, k=(3, 9),metric='silhouette')
     visualizer3.fit(X)
     visualizer3.show(outpath="grafici/kelbow_silhouette.png")
 
@@ -212,6 +212,10 @@ data = data.drop("Nutritional Status", axis=1)
 number = LabelEncoder()
 data['Gender'] = number.fit_transform(data['Gender'])
 data['Transportation Used'] = number.fit_transform(data['Transportation Used'])
+
+scaler = StandardScaler()
+scaled_array = scaler.fit_transform(data)
+data = pd.DataFrame(scaled_array, columns=data.columns)
 
 elbow_method(data.values)
 
@@ -285,10 +289,10 @@ centroids = kmeans.cluster_centers_
 plt.scatter(
     centroids[:, 0],
     centroids[:, 1],
-    marker="x",
-    s=169,
+    marker="o",
+    s=60,
     linewidths=3,
-    color="w",
+    color="black",
     zorder=10,
 )
 plt.title("K-means clustering")
