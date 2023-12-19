@@ -198,12 +198,12 @@ def bench_k_means(kmeans, name, data, labels):
     print(formatter_result.format(*results))
 
 
-data = pd.read_csv("..\\data\\obesity_dataset_clean.csv")
-(n_samples, n_features), n_digits = data.shape, 3
+initial_data = pd.read_csv("..\\data\\obesity_dataset_clean.csv")
+(n_samples, n_features), n_digits = initial_data.shape, 3
 
 print(f"# digits: {n_digits}; # samples: {n_samples}; # features {n_features}")
 
-data = data.iloc[:, 1:]
+data = initial_data.iloc[:, 1:]
 
 labels = data["Nutritional Status"].values
 
@@ -256,6 +256,11 @@ data_reduced = pd.DataFrame(pca_x).values
 
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto')
 kmeans.fit(data_reduced)
+
+labels = kmeans.predict(data_reduced).tolist()
+
+initial_data["cluster"] = labels
+initial_data.to_csv("clustering_results.csv")
 
 # Step size of the mesh. Decrease to increase the quality of the VQ.
 h = 0.02  # point in the mesh [x_min, x_max]x[y_min, y_max].
