@@ -70,6 +70,18 @@ def BMI():
 
     plt.show()
 
+def BMI_clustering():
+    obesity_clustering['BMI'] = obesity_clustering['Weight'] / obesity_clustering['Height'] ** 2
+
+    sns.color_palette('Paired')
+    sns.kdeplot(obesity_clustering, x=obesity_clustering['BMI'], hue=obesity_clustering['cluster'], fill=True,
+                palette={'Cluster 0': plt.cm.Paired(0), 'Cluster 1': plt.cm.Paired(2), 'Cluster 2': plt.cm.Paired(4)})
+    plt.ylabel('Densità')
+    plt.title('Distribuzione dell\'indice di massa corporea')
+    plt.savefig('grafici/Distribuzione BMI clustering', bbox_inches='tight')
+
+    plt.show()
+
 
 def pie_chart():
     stato_nutrizionale = obesity['Nutritional Status'].value_counts()
@@ -87,10 +99,10 @@ def pie_chart():
     plt.show()
 
 def pie_chart_clustering():
-    cluster = obesity['cluster'].value_counts()
-    labels = ['Cluster 1', 'Cluster 2', 'Cluster 3']
-    count = [cluster.get(0, 0), cluster.get(1, 0),cluster.get(2, 0)]
-    colors = sns.color_palette('Paired')[0:8]
+    cluster = obesity_clustering['cluster'].value_counts()
+    labels = ['Cluster 0', 'Cluster 1', 'Cluster 2']
+    count = [cluster.get('Cluster 0', 0), cluster.get('Cluster 1', 0),cluster.get('Cluster 2', 0)]
+    colors = [plt.cm.Paired(0), plt.cm.Paired(2), plt.cm.Paired(4)]
     plt.pie(count, colors=colors, autopct='%.0f%%', labels=None)
     plt.legend(labels, bbox_to_anchor=(1.05, 1.0), loc='upper left')
     plt.savefig('grafici/Pie Chart Clustering', bbox_inches='tight')
@@ -111,9 +123,9 @@ def violin_chart():
 
 def violin_chart_clustering():
     plt.figure(figsize=(13, 6))  # Imposta le dimensioni della figura
-    sns.violinplot(data=obesity, x=obesity['cluster'], y=obesity['Weight'], hue=obesity['Gender'], split=True,
+    sns.violinplot(data=obesity_clustering, x=obesity_clustering['cluster'], y=obesity_clustering['Weight'], hue=obesity_clustering['Gender'], split=True,
                    gap=.1, inner="point", cut=0, bw_adjust=3.0, palette={'Male': '#71a5d7', 'Female': '#e8638e'},
-                   order=[0, 1, 2])
+                   order=['Cluster 0', 'Cluster 1', 'Cluster 2'])
     plt.title('Distribuzione dei cluster per peso')
 
     plt.savefig('grafici/Grafico a violino clustering', bbox_inches='tight')
@@ -183,16 +195,16 @@ def plot_scatterplot():
 def plot_scatterplot_clustering():
     labels = ['Cluster 0', 'Cluster 1', 'Cluster 2']
 
-    data_c0 = obesity[obesity["cluster"] == 0]
-    data_c1 = obesity[obesity["cluster"] == 1]
-    data_c2 = obesity[obesity["cluster"] == 2]
+    data_c0 = obesity_clustering[obesity_clustering["cluster"] == 'Cluster 0']
+    data_c1 = obesity_clustering[obesity_clustering["cluster"] == 'Cluster 1']
+    data_c2 = obesity_clustering[obesity_clustering["cluster"] == 'Cluster 2']
 
-    sns.set_palette(sns.color_palette('Paired')[0:10])
+    #sns.set_palette(sns.color_palette('Paired')[0:10])
 
     plt.title("Dispersione peso e altezza per cluster")
-    sns.scatterplot(data=data_c0, x="Weight", y="Height")
-    sns.scatterplot(data=data_c1, x="Weight", y="Height")
-    sns.scatterplot(data=data_c2, x="Weight", y="Height")
+    sns.scatterplot(data=data_c0, x="Weight", y="Height", color=plt.cm.Paired(0))
+    sns.scatterplot(data=data_c1, x="Weight", y="Height", color=plt.cm.Paired(2))
+    sns.scatterplot(data=data_c2, x="Weight", y="Height", color=plt.cm.Paired(4))
 
     plt.xlabel("Weight")
     plt.ylabel("Height")
@@ -550,7 +562,7 @@ def histograms():
 
 def histograms_clustering():
     fig, axes = plt.subplots(2, 3)
-    colors = sns.color_palette('Paired')[0:7]
+    colors = [plt.cm.Paired(0), plt.cm.Paired(2), plt.cm.Paired(4)]
     sns.histplot(obesity_clustering, x='Age', hue="cluster", element="step", palette=colors, hue_order=cluster,
                  ax=axes[0, 0], legend=False).set(ylabel=None)
     axes[0, 0].set_title('Age Distribution')
@@ -573,8 +585,6 @@ def histograms_clustering():
     fig.text(0.07, 0.5, 'Count', va='center', rotation='vertical')
     plt.show()
 
-histograms_clustering()
-
 # histograms()
 # weight_height()
 # BMI()
@@ -592,8 +602,7 @@ histograms_clustering()
 #distributed_dot_plot(obesity_replaced)
 #waffle_charts()
 
-'''pie_chart_clustering()
+pie_chart_clustering()
 violin_chart_clustering()
 plot_scatterplot_clustering()
-
-'''
+BMI_clustering()
