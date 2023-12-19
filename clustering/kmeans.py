@@ -255,11 +255,12 @@ pca_x = pca.fit_transform(d_pca4)
 data_reduced = pd.DataFrame(pca_x).values
 
 kmeans = KMeans(init="k-means++", n_clusters=n_digits, n_init='auto')
-kmeans.fit(data_reduced)
+labels = kmeans.fit(data_reduced)
 
 labels = kmeans.predict(data_reduced).tolist()
 
 initial_data["cluster"] = labels
+initial_data = initial_data.iloc[:,1:]
 initial_data.to_csv("clustering_results.csv")
 
 # Step size of the mesh. Decrease to increase the quality of the VQ.
