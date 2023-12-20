@@ -562,30 +562,32 @@ def histograms():
 
 def histograms_clustering():
     fig, axes = plt.subplots(2, 3)
-    colors = [plt.cm.Paired(0), plt.cm.Paired(2), plt.cm.Paired(4)]
-    sns.histplot(obesity_clustering, x='Age', hue="cluster", element="step", palette=colors, hue_order=cluster,
+    plt.figure(figsize=(20, 7))
+    colors = [plt.cm.Paired(4), plt.cm.Paired(2), plt.cm.Paired(0)]
+    sns.histplot(obesity_clustering, x='Age', hue="cluster", element="step", palette=colors,
                  ax=axes[0, 0], legend=False).set(ylabel=None)
     axes[0, 0].set_title('Age Distribution')
-    sns.histplot(obesity_clustering, x='Height', hue="cluster", element="step", palette=colors, hue_order=cluster,
+    sns.histplot(obesity_clustering, x='Height', hue="cluster", element="step", palette=colors,
                  ax=axes[0, 1], legend=False).set(ylabel=None)
     axes[0, 1].set_title('Height Distribution')
     sns.histplot(obesity_clustering, x='Weight', hue="cluster", element="step", palette=colors,
-                 hue_order=cluster, ax=axes[0, 2], legend=False).set(ylabel=None)
+                 ax=axes[0, 2], legend=False).set(ylabel=None)
     axes[0, 2].set_title('Weight Distribution')
     sns.histplot(obesity_clustering, x='Daily Water Consumption', hue="cluster", element="step",
-                 palette=colors, hue_order=cluster, ax=axes[1, 0], legend=False).set(ylabel=None)
+                 palette=colors, ax=axes[1, 0], legend=False).set(ylabel=None)
     axes[1, 0].set_title('Daily Water Consumption Distribution')
     sns.histplot(obesity_clustering, x='Physical Activity Frequency', hue="cluster", element="step",
-                 palette=colors, hue_order=cluster, ax=axes[1, 1], legend=False).set(ylabel=None)
+                 palette=colors, ax=axes[1, 1], legend=False).set(ylabel=None)
     axes[1, 1].set_title('Physical Activity Frequency Distribution')
     sns.histplot(obesity_clustering, x='Time Using Technology Devices', hue="cluster", element="step",
-                 palette=colors, hue_order=cluster, ax=axes[1, 2], legend=False).set(ylabel=None)
+                 palette=colors, ax=axes[1, 2], legend=False).set(ylabel=None)
     axes[1, 2].set_title('Time Using Technology Devices')
     fig.legend(labels=cluster, loc="upper right", fontsize=8.7)
     fig.text(0.07, 0.5, 'Count', va='center', rotation='vertical')
+    fig.savefig("istogrammi_clustering.png", bbox_inches='tight')
     plt.show()
 
-# histograms()
+histograms_clustering()
 # weight_height()
 # BMI()
 # violin_chart()
