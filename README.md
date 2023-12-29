@@ -17,8 +17,18 @@ metri. Sulla base del BMI si distinguono le seguenti categorie:
 * obesità di grado I (30.0 ≤ BM I ≤ 34.9),
 * obesità di grado II (35.0 ≤ BM I ≤ 39.9),
 * obesità di grado III (BM I ≥ 40).
+
 Queste sono le etichette considerate per il task di classificazione.
+
+Dopo una prima fase di ETL e di analisi descrittiva, si sono addestrati i modelli.
 
 ## Classification
 
-La prima parte dell’analisi si focalizza sul task di classificazione 
+I modelli di machine learning che sono stati utilizzati al finedi classificare i dati in categorie sono:
+* Decision Tree;
+* Random Forest;
+* Gradient Boosting;
+* XGBoost;
+* AdaBoost;
+* Support Vector Machine;
+* Logistic Regression.
