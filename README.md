@@ -22,13 +22,21 @@ Queste sono le etichette considerate per il task di classificazione.
 
 Dopo una prima fase di ETL e di analisi descrittiva, si sono addestrati i modelli.
 
-## Classification
+## Classificazione
 
-I modelli di machine learning che sono stati utilizzati al finedi classificare i dati in categorie sono:
-* Decision Tree;
-* Random Forest;
-* Gradient Boosting;
-* XGBoost;
-* AdaBoost;
-* Support Vector Machine;
+Gli algoritmi di machine learning che sono stati utilizzati al fine di ottenere dei classificatori sono:
+* Decision Tree,
+* Random Forest,
+* Gradient Boosting,
+* XGBoost,
+* AdaBoost,
+* Support Vector Machine,
 * Logistic Regression.
+
+## Clustering
+
+I modelli addestrati per il clustering sono:
+* DBSCAN,
+* K-means
+
+usando diverse configurazioni di parametri
