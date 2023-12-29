@@ -44,3 +44,10 @@ I modelli addestrati per il clustering sono:
 usando diverse configurazioni di parametri.
 Per determinare il miglior valore di k per il K-means e per scegliere l'eps per il DBSCAN si è usato il metodo del gomito.
 Le prestazioni sono state valutate attraverso diverse metriche, tra cui la silhouette, la V-measure, l'omogeneità...
+
+### Autori
+Progetto realizzato da:
+- [Gobbi Chiara](https://github.com/chiaragii)
+- [Moretti Alice](https://github.com/AliceMoretti00)
+- [Parlapiano Federica](https://github.com/FedericaParlapiano)
+- [Ronci Arianna](https://github.com/AriannaRonci)
