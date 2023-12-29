@@ -1,5 +1,7 @@
 <h1 align="center"> Obesity or CVD risk - Classificazione e Clustering </h1>
 
+Questa repository è relativa all'uso di alcune librerie per la creazione di modelli di classificazione e clustering.
+
 ## Il dataset
 
 Il dataset considerato è consultabile al [link](https://www.kaggle.com/datasets/aravindpcoder/obesity-or-cvd-risk-classifyregressorcluster/data). 
