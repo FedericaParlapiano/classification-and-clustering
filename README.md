@@ -2,6 +2,11 @@
 
 Questa repository è relativa all'uso di alcune librerie per la creazione di modelli di classificazione e clustering.
 
+## Requisiti
+* Python 3.9 o versioni successive
+* Dipendenze Python: pandas, numpy, statsmodels, transformers, torch, sklearn
+
+
 ## Il dataset
 
 Il dataset considerato è consultabile al [link](https://www.kaggle.com/datasets/aravindpcoder/obesity-or-cvd-risk-classifyregressorcluster/data). 
